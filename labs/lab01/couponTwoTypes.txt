@@ -1,0 +1,96 @@
+[cse-131590:~/COUPON] weems% a.out
+Enter total number of coupons and number of coupons of first type
+3 1
+Enter probability for each coupon of first type
+0.2
+There are 2 coupons of second type with probability 0.400000
+Enter # of iterations for empirical
+1000
+Enter seed
+123
+Theoretical 6.416667 Count 5
+Empirical boxes 6.532000
+[cse-131590:~/COUPON] weems% a.out
+Enter total number of coupons and number of coupons of first type
+6 1
+Enter probability for each coupon of first type
+0.5
+There are 5 coupons of second type with probability 0.100000
+Enter # of iterations for empirical
+1000
+Enter seed
+456
+Theoretical 22.841270 Count 11
+Empirical boxes 22.615000
+[cse-131590:~/COUPON] weems% a.out
+Enter total number of coupons and number of coupons of first type
+10 4
+Enter probability for each coupon of first type
+0.2
+There are 6 coupons of second type with probability 0.033333
+Enter # of iterations for empirical
+1000
+Enter seed
+789
+Theoretical 73.520884 Count 34
+Empirical boxes 74.521000
+[cse-131590:~/COUPON] weems% a.out
+Enter total number of coupons and number of coupons of first type
+20 8
+Enter probability for each coupon of first type
+0.1
+There are 12 coupons of second type with probability 0.016667
+Enter # of iterations for empirical
+1000
+Enter seed
+4321
+Theoretical 186.196900 Count 116
+Empirical boxes 191.574000
+[cse-131590:~/COUPON] weems% a.out
+Enter total number of coupons and number of coupons of first type
+50 25
+Enter probability for each coupon of first type
+0.01
+There are 25 coupons of second type with probability 0.030000
+Enter # of iterations for empirical
+1000
+Enter seed
+333
+Theoretical 381.843827 Count 675
+Empirical boxes 385.073000
+[cse-131590:~/COUPON] weems% a.out
+Enter total number of coupons and number of coupons of first type
+50 5
+Enter probability for each coupon of first type
+0.001
+There are 45 coupons of second type with probability 0.022111
+Enter # of iterations for empirical
+1000
+Enter seed
+765
+Theoretical 2283.352412 Count 275
+Empirical boxes 2294.080000
+[cse-131590:~/COUPON] weems% a.out
+Enter total number of coupons and number of coupons of first type
+50 10
+Enter probability for each coupon of first type
+0.09
+There are 40 coupons of second type with probability 0.002500
+Enter # of iterations for empirical
+1000
+Enter seed
+333
+Theoretical 1711.417201 Count 450
+Empirical boxes 1695.058000
+[cse-131590:~/COUPON] weems% a.out
+Enter total number of coupons and number of coupons of first type
+50 10
+Enter probability for each coupon of first type
+0.099
+There are 40 coupons of second type with probability 0.000250
+Enter # of iterations for empirical
+1000
+Enter seed
+5555
+Theoretical 17114.172170 Count 450
+Empirical boxes 17205.949000
