@@ -78,6 +78,7 @@ Part 01
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 // S[1] . . . S[n] are the input values
 // A[k] will store the smallest subscript value j s.t. there is some
@@ -154,6 +155,17 @@ else
 free(S);
 free(A);
 */
+
+
+typedef uint64_t marker;
+
+void comb(int, int, marker, int, int);
+
+
+marker one = 1;
+double term;
+int *P,*M;
+
 int main()
 {
  /**
@@ -181,13 +193,66 @@ int main()
   scanf("%d", &s);
 
   h = m-k; // coupons of the second type
-  q = 1-p; // probability of coupons of the second type
+  q = (1-(k*p)) / h; // probability of coupons of the second type
 
   printf("Total coupons - m: %d\n", m);
   printf("Total coupons of the first type - k: %d\n", k);
-  printf("The probability of coupon of the first type - p: %lf\n", p);
+  printf("The probability of coupon of the first type - p: %.2lf\n", p);
   printf("Total coupons of the second type - h: %d\n", h);
-  printf("The probability of coupon of the first type - q: %lf\n", q);
+  printf("The probability of coupon of the first type - q: %.2lf\n", q);
+  printf("\n\n");
+
+
+  if( (k>m) || (p<0) || (p>1.0) || (m>50) || (m<2))
+  {
+    printf("Out of bound entries. %d\n", __LINE__);
+    exit(0);
+  }
+
+  int sign, c;
+
+  for(c=0; c<=m-1; c++)
+  {
+    if ( (m-1-c) % 2 == 0 )
+    { // even
+      sign = 1;
+    }
+    else
+    {
+      sign = -1;
+    }
+
+    comb(m,c,1,1,sign);
+  }
 
   return 0;
+}
+
+
+
+void comb(int pool, int need, marker chosen, int at, int sign)
+{
+	if (pool < need + at) return; /* not enough bits left */
+
+	if (!need)
+  {
+		/* got all we needed; print the thing.  if other actions are
+		 * desired, we could have passed in a callback function. */
+		for (at = 1; at < pool; at++)
+    {
+			if (chosen & (one << at))
+      {
+        term = at;
+        term = sign*term;
+        printf("%.2lf ", term);
+
+      }
+    }
+
+    printf("\n");
+		return;
+	}
+	/* if we choose the current item, "or" (|) the bit to mark it so. */
+	comb(pool, need - 1, chosen | (one << at), at + 1, sign);
+	comb(pool, need, chosen, at + 1, sign);  /* or don't choose it, go to next */
 }
