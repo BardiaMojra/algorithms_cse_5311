@@ -156,16 +156,19 @@ free(S);
 free(A);
 */
 
+#define NBUG
 
 typedef uint64_t marker;
 
-void comb(int, int, marker, int, int);
-
+void getPj(int, int, double, double);
+void comb(int, int, marker, int);
+void print_prbs(int);
 
 marker one = 1;
 double term;
-int *P,*M;
-
+double *P;
+int cnt;
+char BS = 0x08;
 int main()
 {
  /**
@@ -177,31 +180,48 @@ int main()
   * q - probability of the second type of coupon (float)
   * s - seed for random natural number generator
   */
-  int m,k,h,t,s;
-  double p,q;
+  int m,k,h,t,s,i;
+  float p,q_;
+  double expected_draws;
 
   printf("Enter total number of coupons and number of coupons of first type [m k]:\n");
-  scanf("%d %d",&m,&k);
+  #ifdef NBUG
+    m = 6;
+    k = 1;
+  #else
+    scanf("%d %d",&m,&k);
+  #endif
 
   printf("Enter probability for coupons of first type [p]:\n");
-  scanf("%lf",&p);
+  #ifdef NBUG
+    p = .2;
+  #else
+    scanf("%lf",&p);
+  #endif
 
   printf("Enter the number of iterations for empirical simulation [t]:\n");
-  scanf("%d", &t);
+  #ifdef NBUG
+    t = 23;
+  #else
+    scanf("%d", &t);
+  #endif
 
   printf("Enter seed [s]:\n");
-  scanf("%d", &s);
+  #ifdef NBUG
+    s = 23;
+  #else
+    scanf("%d", &s);
+  #endif
 
   h = m-k; // coupons of the second type
-  q = (1-(k*p)) / h; // probability of coupons of the second type
+  q_ = (1-(k*p)) / h; // probability of coupons of the second type
 
   printf("Total coupons - m: %d\n", m);
   printf("Total coupons of the first type - k: %d\n", k);
   printf("The probability of coupon of the first type - p: %.2lf\n", p);
   printf("Total coupons of the second type - h: %d\n", h);
-  printf("The probability of coupon of the first type - q: %.2lf\n", q);
+  printf("The probability of coupon of the first type - q: %.2lf\n", q_);
   printf("\n\n");
-
 
   if( (k>m) || (p<0) || (p>1.0) || (m>50) || (m<2))
   {
@@ -209,11 +229,43 @@ int main()
     exit(0);
   }
 
-  int sign, c;
-
-  for(c=0; c<=m-1; c++)
+  P = (double*) malloc((k+1)*sizeof(double));
+  if(!P)
   {
-    if ( (m-1-c) % 2 == 0 )
+    printf("Malloc failed! %d\n", __LINE__);
+    exit(0);
+  }
+
+  // print probabilities
+  double sum;
+  printf("P_i = {");
+  for(i=1; i<=m; i++)
+  {
+    if(i<=k)
+    {
+      printf("%.2lf, ", p);
+      sum += p;
+    }
+    else
+    {
+      printf("%.2lf, ", q_);
+      sum += q_;
+    }
+  }
+  printf("%c%c} \n", BS, BS);
+  printf("P_sum: %.2lf \n\n", sum);
+
+
+  int sign, q;
+  cnt = 0; // reset counter
+
+  double term = 0.0;
+
+  for(q=0; q<=m-1; q++)
+  {
+    printf("q:%d\n", q);
+
+    if ( (m-1-q) % 2 == 0 )
     { // even
       sign = 1;
     }
@@ -222,37 +274,87 @@ int main()
       sign = -1;
     }
 
-    comb(m,c,1,1,sign);
+    printf("|_.> (%d)\n", sign);
+    getPj(q,k,p,q_);
+
+    int kChoose_i;
+
+    for(i=0; i<=k; i++)
+    {
+      if(i==0)
+      {
+        kChoose_i = 1;
+      }
+
+      kChoose_i = kChoose_i * ((k+1-i) / i);
+      term += *(P+i) * kChoose_i;
+      printf("----->> term:(%d) %.2lf \n", sign, term);
+
+    }
+
+    expected_draws += (term*sign);
   }
+
+  printf("Theoretical expected draws: %.2lf (count %d)\n", expected_draws, cnt);
+
+  free(P);
 
   return 0;
 }
 
-
-
-void comb(int pool, int need, marker chosen, int at, int sign)
+void getPj(int q, int k, double p, double q_)
 {
-	if (pool < need + at) return; /* not enough bits left */
+  int i;
+  double tmp1, Tj, Pj;
+  for(i=0; i<=k; i++)
+  {
+    if(q==0)
+    {
+      Tj = 1;
+      printf(" 1 / ( 1 - (%.2lf)*%d - (%.2lf)*(%d-%d))\n", p, i, q_, q, i);
+    }
+    else
+    {
+      printf(" 1 / ( 1 - (%.2lf)*%d - (%.2lf)*(%d-%d))\n", p, i, q_, q, i);
+      Pj= p*i + q_*(q-i);
+      printf("Pj: %.2lf\n", Pj);
+      Tj = 1 - Pj;
+      Tj = 1 / Tj;
+      printf("Tj: %.2lf\n", Tj);
+    }
+    cnt++;
+  }
+  return;
+}
+
+void comb(int pool, int need, marker chosen, int at)
+{
+	if (pool < need + at)
+  {
+    //printf("Not enough bits for marker! %d\n", __LINE__);
+    return; /* not enough bits left */
+  }
 
 	if (!need)
   {
-		/* got all we needed; print the thing.  if other actions are
-		 * desired, we could have passed in a callback function. */
-		for (at = 1; at < pool; at++)
+    double Pj = 0.0, Tj = 0.0;
+		for (at = 1; at<pool; at++)
     {
 			if (chosen & (one << at))
       {
-        term = at;
-        term = sign*term;
-        printf("%.2lf ", term);
-
+        printf("P_%d ", at);
+        Pj += *(P+at);
+        cnt++;
       }
     }
+    printf(" | Pj: %.2lf, Qj: %.2lf\n", Pj, (1-Pj));
+    Tj = 1 - Pj;
+    Tj = 1 / Tj;
+    term += Tj;
 
-    printf("\n");
 		return;
 	}
-	/* if we choose the current item, "or" (|) the bit to mark it so. */
-	comb(pool, need - 1, chosen | (one << at), at + 1, sign);
-	comb(pool, need, chosen, at + 1, sign);  /* or don't choose it, go to next */
+
+	comb(pool, need - 1, chosen | (one << at), at + 1);
+	comb(pool, need, chosen, at + 1);  /* or don't choose it, go to next */
 }
