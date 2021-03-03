@@ -80,93 +80,26 @@ Part 01
 #include <stdlib.h>
 #include <stdint.h>
 
-// S[1] . . . S[n] are the input values
-// A[k] will store the smallest subscript value j s.t. there is some
-//      subset of S[1] . . . S[j-1], along with S[j], that sums to k
-//int *S,*A,C,n;
-
-/**
-
-S=(int*) malloc((n+1)*sizeof(int));
-A=(int*) malloc((C+1)*sizeof(int));
-if (!S || !A)
-{
-  printf("malloc failed %d\n",__LINE__);
-  exit(0);
-}
-
-printf("Enter set of %d positive numbers\n",n);
-S[0]=0;
-for (i=1;i<=n;i++)
-  scanf("%d",&S[i]);
-
-for (i=0;i<=C;i++)
-  A[i]=(-1);  // initialize to "impossible"
-
-A[0]=0;  // This is a cute way to force the initialization in Notes 18.
-for (i=0;i<C;i++)
-  // Derive other cases from optimal way to get A[i]
-  if (A[i]!=(-1))
-    // The S[] values increase the sum in increasing subscript order.
-    for (j=A[i]+1;j<=n;j++)
-    {
-      k=i+S[j];
-      if (k>C)
-        continue;
-      // See if A[k] can be improved
-      if (A[k]==(-1) || A[k]>j)
-      {
-        printf("Changed A[%d] to %d\n",k,j);
-        A[k]=j;
-      }
-    }
-
-if (C<=50)
-{
-  printf(" i     S[i]\n");
-  printf("--- ----------\n");
-  for (i=1;i<=n;i++)
-    printf("%3d     %4d\n",i,S[i]);
-  printf(" i     A[i]\n");
-  printf("--- ----------\n");
-  for (i=1;i<=C;i++)
-  {
-    printf("%3d ",i);
-    if (A[i]==(-1))
-      printf("IMPOSSIBLE\n");
-    else
-      printf("%5d (%d)\n",A[i],S[A[i]]);
-  }
-}
-
-if (A[C]==(-1))
-  printf("no solution\n");
-else
-{
-  // traceback to get subset
-  printf("Solution is:\n");
-  sum=C;
-  while (sum>0)
-  {
-    printf("S[%d]=%d\n",A[sum],S[A[sum]]);
-    sum-=S[A[sum]];  // Remove last S[] value included in sum.
-  }
-}
-free(S);
-free(A);
-*/
 
 #define NBUG
+#define SIGFIG 100
 
 typedef uint64_t marker;
 
+void print_Pj(int);
 void getPj(int, int, double, double);
 void comb(int, int, marker, int);
 void print_prbs(int);
+double rnd(double);
+int min(int k, int q);
+void pascal_triangle(int n);
+
 
 marker one = 1;
 double term;
 double *P;
+int *P2;
+
 int cnt;
 char BS = 0x08;
 int main()
@@ -176,25 +109,25 @@ int main()
   * k - number of coupons of the first type
   * h - number of coupons of the second type
   * t - number of iterations for empirical simulation
-  * p - probability of the first type of coupon (float)
-  * q - probability of the second type of coupon (float)
+  * p - probability of the first type of coupon (double)
+  * q - probability of the second type of coupon (double)
   * s - seed for random natural number generator
   */
   int m,k,h,t,s,i;
-  float p,q_;
+  double p,q_;
   double expected_draws;
 
   printf("Enter total number of coupons and number of coupons of first type [m k]:\n");
   #ifdef NBUG
-    m = 6;
-    k = 1;
+    m = 15;
+    k = 5;
   #else
     scanf("%d %d",&m,&k);
   #endif
 
   printf("Enter probability for coupons of first type [p]:\n");
   #ifdef NBUG
-    p = .2;
+    p = .1;
   #else
     scanf("%lf",&p);
   #endif
@@ -214,6 +147,13 @@ int main()
   #endif
 
   h = m-k; // coupons of the second type
+  if(k>h) // keep k always smaller or equal to m/2
+  {
+    k = h;
+    h = m-k;
+    p = 1-p;
+  }
+
   q_ = (1-(k*p)) / h; // probability of coupons of the second type
 
   printf("Total coupons - m: %d\n", m);
@@ -221,7 +161,9 @@ int main()
   printf("The probability of coupon of the first type - p: %.2lf\n", p);
   printf("Total coupons of the second type - h: %d\n", h);
   printf("The probability of coupon of the first type - q: %.2lf\n", q_);
-  printf("\n\n");
+  printf("The number of iterations for empirical simulation - t: %d\n", t);
+  printf("The seed number for random number generator - s: %d \n", s);
+  printf("\n");
 
   if( (k>m) || (p<0) || (p>1.0) || (m>50) || (m<2))
   {
@@ -229,7 +171,10 @@ int main()
     exit(0);
   }
 
+
   P = (double*) malloc((k+1)*sizeof(double));
+  P2 = (int*) malloc((k+1)*sizeof(int));
+
   if(!P)
   {
     printf("Malloc failed! %d\n", __LINE__);
@@ -259,102 +204,122 @@ int main()
   int sign, q;
   cnt = 0; // reset counter
 
-  double term = 0.0;
+  double term;
 
-  for(q=0; q<=m-1; q++)
+
+  for(q=0; q<m; q++)
   {
+    int kqmin2 = min(k,q);
+    double kChoose_j, tmp;
+    int j;
+
+    term = 0.0;
+
+    printf("\n\n");
     printf("q:%d\n", q);
 
-    if ( (m-1-q) % 2 == 0 )
-    { // even
-      sign = 1;
-    }
-    else
-    {
-      sign = -1;
-    }
+    if ( (m-1-q) % 2 == 0 ) {sign = 1;}
+    else {sign = -1;}
 
-    printf("|_.> (%d)\n", sign);
     getPj(q,k,p,q_);
+    pascal_triangle(m-kqmin2);
 
-    int kChoose_i;
-
-    for(i=0; i<=k; i++)
+    for(j=0; j<=kqmin2; j++)
     {
-      if(i==0)
+      printf("j:%d\n", j);
+      if(j==0)
       {
-        kChoose_i = 1;
+        kChoose_j = 1;
+      }
+      else
+      {
+        kChoose_j = rnd(kChoose_j * ((k+1-j) / j));
       }
 
-      kChoose_i = kChoose_i * ((k+1-i) / i);
-      term += *(P+i) * kChoose_i;
-      printf("----->> term:(%d) %.2lf \n", sign, term);
+      //printf("%dChoose_%d: %.2f \n", k,j, kChoose_j);
+      //printf("%dChoose_%d: %d \n",m-kqmin2,q-j,*(P2+(q-j)));
 
+      tmp = *(P+j) * kChoose_j;
+      tmp = tmp * (*(P2+(q-j)));
+      printf(" (P_%d:%.2lf)(%dChoose_%d:%.2lf)(%dChoose_%d:%d): %.2lf\n", \
+      j,*(P+j),k,j,kChoose_j, m-kqmin2,q-j,*(P2+(q-j)),tmp);
+      term += tmp;
     }
-
+    printf("----->> term:(%d) %.2lf \n", sign, term);
     expected_draws += (term*sign);
   }
 
   printf("Theoretical expected draws: %.2lf (count %d)\n", expected_draws, cnt);
 
+
+
+
   free(P);
+  free(P2);
 
   return 0;
 }
 
+void pascal_triangle(int n)
+{
+  unsigned int i,v;
+
+    v = 1;
+    for (i=0; i<=n; i++ )
+    {
+      printf("%3d ", v);
+      *(P2+i) = v;
+      v = v * (n-i)/(i+1);
+    }
+    printf("\n");
+    return;
+}
+
+// round to sigfig decimal places
+double rnd(double var)
+{
+  double value = (int)(var * SIGFIG + .5);
+  return (double)(value/SIGFIG);
+}
+
 void getPj(int q, int k, double p, double q_)
 {
+  printf("getPj for q:%d\n", q);
+
   int i;
-  double tmp1, Tj, Pj;
-  for(i=0; i<=k; i++)
+  double Tj, Pj;
+  int kqmin = min(k,q);
+  for(i=0; i<=kqmin; i++)
   {
-    if(q==0)
-    {
-      Tj = 1;
-      printf(" 1 / ( 1 - (%.2lf)*%d - (%.2lf)*(%d-%d))\n", p, i, q_, q, i);
-    }
-    else
-    {
-      printf(" 1 / ( 1 - (%.2lf)*%d - (%.2lf)*(%d-%d))\n", p, i, q_, q, i);
-      Pj= p*i + q_*(q-i);
-      printf("Pj: %.2lf\n", Pj);
-      Tj = 1 - Pj;
-      Tj = 1 / Tj;
-      printf("Tj: %.2lf\n", Tj);
-    }
+    printf("   1/( 1-(%.2lf)*%d-(%.2lf)*(%d-%d))\n", p, i, q_, q, i);
+    Pj= p*i + q_*(q-i);
+    //printf("Pj: %.2lf\n", Pj);
+    Tj = 1 - Pj;
+    Tj = 1 / Tj;
+    //printf("Tj: %.2lf\n", Tj);
+    *(P+i) = rnd(Tj);
     cnt++;
   }
+  printf("\n");
+  print_Pj(k);
   return;
 }
 
-void comb(int pool, int need, marker chosen, int at)
+void print_Pj(int k)
 {
-	if (pool < need + at)
+  for (int i = 0; i<=k; i++)
   {
-    //printf("Not enough bits for marker! %d\n", __LINE__);
-    return; /* not enough bits left */
+    printf("*(P+%d): %.2lf\n", i, *(P+i));
   }
+  printf("\n");
+  return;
+}
 
-	if (!need)
-  {
-    double Pj = 0.0, Tj = 0.0;
-		for (at = 1; at<pool; at++)
-    {
-			if (chosen & (one << at))
-      {
-        printf("P_%d ", at);
-        Pj += *(P+at);
-        cnt++;
-      }
-    }
-    printf(" | Pj: %.2lf, Qj: %.2lf\n", Pj, (1-Pj));
-    Tj = 1 - Pj;
-    Tj = 1 / Tj;
-    term += Tj;
 
-		return;
-	}
-
-	comb(pool, need - 1, chosen | (one << at), at + 1);
-	comb(pool, need, chosen, at + 1);  /* or don't choose it, go to next */
+int min(int k, int q)
+{
+  if(k<q)
+    return k;
+  else
+    return q;
 }
