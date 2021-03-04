@@ -1,3 +1,6 @@
+// compile with: gcc -Wall -g lab01_couponCollector.c -lm or gcc lab01_couponCollector.c -lm
+
+
 /**
  * Lab01 P01 Coupon Collection
  *  How many boxes of cereal needs to be opened under a general discrete
@@ -73,15 +76,16 @@ Part 01
 */
 
 
-
-// Solves subset sum using dynamic programming
-
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <math.h>
 
 
-#define NBUG
+//#define NBUG
+//#define NBUG2
+//#define NBUG_SIM_ONLY
+
 #define SIGFIG 100
 
 typedef uint64_t marker;
@@ -93,12 +97,16 @@ void print_prbs(int);
 double rnd(double);
 int min(int k, int q);
 void pascal_triangle(int n);
+int coupon_collection_simulation(int, int, double, double, int);
+double gcd(double, double);
 
 
-marker one = 1;
 double term;
 double *P;
 int *P2;
+int *C;
+int *M;
+
 
 int cnt;
 char BS = 0x08;
@@ -119,8 +127,8 @@ int main()
 
   printf("Enter total number of coupons and number of coupons of first type [m k]:\n");
   #ifdef NBUG
-    m = 15;
-    k = 5;
+    m = 7;
+    k = 3;
   #else
     scanf("%d %d",&m,&k);
   #endif
@@ -171,11 +179,20 @@ int main()
     exit(0);
   }
 
+#ifdef NBUG_SIM_ONLY
+  coupon_collection_simulation(m, k, p, q_, s);
+
+  free(P);
+  free(P2);
+  return 0;
+#endif // end of #ifdef NBUGSIM_ONLY
 
   P = (double*) malloc((k+1)*sizeof(double));
   P2 = (int*) malloc((k+1)*sizeof(int));
+  M = (int*) malloc((t+1)*sizeof(int));
 
-  if(!P)
+
+  if(!P || !P2 || !M)
   {
     printf("Malloc failed! %d\n", __LINE__);
     exit(0);
@@ -215,8 +232,10 @@ int main()
 
     term = 0.0;
 
+#ifdef NBUG
     printf("\n\n");
     printf("q:%d\n", q);
+#endif
 
     if ( (m-1-q) % 2 == 0 ) {sign = 1;}
     else {sign = -1;}
@@ -226,7 +245,10 @@ int main()
 
     for(j=0; j<=kqmin2; j++)
     {
+#ifdef NBUG
       printf("j:%d\n", j);
+#endif
+
       if(j==0)
       {
         kChoose_j = 1;
@@ -235,27 +257,42 @@ int main()
       {
         kChoose_j = rnd(kChoose_j * ((k+1-j) / j));
       }
-
-      //printf("%dChoose_%d: %.2f \n", k,j, kChoose_j);
-      //printf("%dChoose_%d: %d \n",m-kqmin2,q-j,*(P2+(q-j)));
-
+#ifdef NBUG2
+      printf("%dChoose_%d: %.2f \n", k,j, kChoose_j);
+      printf("%dChoose_%d: %d \n",m-kqmin2,q-j,*(P2+(q-j)));
+#endif
       tmp = *(P+j) * kChoose_j;
       tmp = tmp * (*(P2+(q-j)));
+#ifdef NBUG
       printf(" (P_%d:%.2lf)(%dChoose_%d:%.2lf)(%dChoose_%d:%d): %.2lf\n", \
       j,*(P+j),k,j,kChoose_j, m-kqmin2,q-j,*(P2+(q-j)),tmp);
+#endif
       term += tmp;
     }
+#ifdef NBUG
     printf("----->> term:(%d) %.2lf \n", sign, term);
+#endif
     expected_draws += (term*sign);
   }
 
   printf("Theoretical expected draws: %.2lf (count %d)\n", expected_draws, cnt);
+
+  unsigned int sim_average = 0;
+
+  for(i=0 ; i<t; i++)
+  {
+    sim_average += coupon_collection_simulation(m,k,p,q_,s);
+  }
+
+
+  printf("Empirical simulation counter: %.2f\n", (float)(sim_average/t));
 
 
 
 
   free(P);
   free(P2);
+  free(M);
 
   return 0;
 }
@@ -267,11 +304,15 @@ void pascal_triangle(int n)
     v = 1;
     for (i=0; i<=n; i++ )
     {
+#ifdef NBUG
       printf("%3d ", v);
+#endif
       *(P2+i) = v;
       v = v * (n-i)/(i+1);
     }
+#ifdef NBUG
     printf("\n");
+#endif
     return;
 }
 
@@ -284,14 +325,19 @@ double rnd(double var)
 
 void getPj(int q, int k, double p, double q_)
 {
+
+#ifdef NBUG
   printf("getPj for q:%d\n", q);
+#endif
 
   int i;
   double Tj, Pj;
   int kqmin = min(k,q);
   for(i=0; i<=kqmin; i++)
   {
+#ifdef NBUG
     printf("   1/( 1-(%.2lf)*%d-(%.2lf)*(%d-%d))\n", p, i, q_, q, i);
+#endif
     Pj= p*i + q_*(q-i);
     //printf("Pj: %.2lf\n", Pj);
     Tj = 1 - Pj;
@@ -300,8 +346,10 @@ void getPj(int q, int k, double p, double q_)
     *(P+i) = rnd(Tj);
     cnt++;
   }
+#ifdef NBUG
   printf("\n");
   print_Pj(k);
+#endif
   return;
 }
 
@@ -322,4 +370,133 @@ int min(int k, int q)
     return k;
   else
     return q;
+}
+
+
+int coupon_collection_simulation(int m, int k, double p, double q, int s)
+{
+  int r;
+  srand(s);
+
+  int i;
+
+  C = (int*) malloc((k+1)*sizeof(int));
+
+
+  double gcd_pq =  rnd(gcd(rnd(p), rnd(q)));
+  int normed_p = (int) rnd(p/gcd_pq);
+  int normed_q = (int) rnd(q/gcd_pq);
+  int total_tokens = (normed_p*k)+(normed_q*(m-k));
+
+#ifdef NBUG
+  double norm_ratio;
+ if (p<q)
+  {
+    norm_ratio = rnd(1.0/p);
+  }
+  else
+  {
+    norm_ratio = rnd(1.0/q);
+  }
+
+  printf("\n\n");
+  printf("p: %.2lf\n", p);
+  printf("q: %.2lf\n", q);
+  printf("gcd_pq: %.2lf\n", gcd_pq);
+  printf("normed_p: %d\n", normed_p);
+  printf("normed_q: %d\n", normed_q);
+  printf("Total_tokens: %d\n", total_tokens);
+  printf("norm_ratio: %.2lf\n", norm_ratio);
+#endif
+
+  int sim_cntr = 0;
+
+  int coup_;
+  for (i=0; i<=50; i++)
+  {
+    *(C+i) = 0;
+  }
+  int cntr2;
+  int all_done = 0;
+  while(!all_done)
+  {
+    r = rand() % total_tokens;
+    double r_double = (double) r;
+#ifdef NBUG
+    printf("\n\n");
+    printf("r: %d\n", r);
+    printf("r_double: %.2lf\n", r_double);
+    printf("\n\n k threshold: %d\n", k*normed_p);
+#endif
+
+    if (r <= k*normed_p)
+    {
+      r_double = r_double/normed_p;
+      r_double = (trunc(r_double+.5));
+#ifdef NBUG
+      printf("p type\n");
+      printf("r_double: %.2lf\n", r_double);
+#endif
+      coup_  = (int) trunc(r_double+.5)+1;
+      *(C+coup_) = 1;
+    }
+    else
+    {
+      r_double = r_double - (k*normed_p);
+      r_double = r_double/normed_q;
+      r_double = r_double + k;
+      coup_  = (int) trunc(r_double+.5) +1;
+#ifdef NBUG
+    printf("q type\n");
+    printf("r_double: %.2lf\n", r_double);
+#endif
+      *(C+coup_) = 1;
+    }
+
+    cntr2 = 0;
+    for(i=1; i<=m; i++)
+    {
+     //  printf("*(C+%d): %d\n", i, *(C+i));
+      if (*(C+i)== 1)
+      {
+        cntr2++;
+      }
+    }
+     if (cntr2 == m)
+     {
+       all_done = 1;
+     }
+
+    sim_cntr++;
+
+#ifdef NBUG
+  printf("\n");
+  printf("sim_cntr: %d\n", sim_cntr);
+#endif
+
+  } // end of while loop
+
+#ifdef NBUG
+  printf("Empirical simulation counter: %d\n", sim_cntr);
+#endif
+  free(C);
+  return sim_cntr;
+}
+
+double gcd(double a, double b)
+{
+  if (a < b)
+  {
+    return gcd(b, a);
+  }
+
+  // base case
+  if (fabs(b) < 0.001)
+  {
+    return a;
+  }
+  else
+  {
+    return (gcd(b, a - floor(a / b) * b));
+  }
 }
