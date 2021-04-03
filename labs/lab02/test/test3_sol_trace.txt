@@ -1,0 +1,37 @@
+max (1, 0) flow value is 6
+3 is in X
+4 is in X
+5 is in X
+Current tree:
+1 0 6
+max (2, 0) flow value is 8
+1 is in X
+Current tree:
+1 2 6
+2 0 8
+max (3, 1) flow value is 6
+5 is in X
+Current tree:
+1 2 6
+2 0 8
+3 1 6
+max (4, 1) flow value is 7
+Adjusting . . .
+Current tree:
+1 4 7
+2 0 8
+3 1 6
+4 2 6
+max (5, 3) flow value is 8
+Current tree:
+1 4 7
+2 0 8
+3 1 6
+4 2 6
+5 3 8
+Final pairs:
+1 4 7
+2 0 8
+3 1 6
+4 2 6
+5 3 8
