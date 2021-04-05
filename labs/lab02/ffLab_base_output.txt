@@ -1,0 +1,120 @@
+
+
+ln:287>>Input & inverses:
+ln:218>>
+  i tail head  cap
+  0   0    1     2
+  1   1    0     0
+  2   0    2     1
+  3   2    0     0
+  4   0    4     2
+  5   4    0     0
+  6   1    2     4
+  7   2    1     0
+  8   2    3     5
+  9   3    2     0
+ 10   3    4     5
+ 11   4    3     0
+ 12   4    1     2
+ 13   1    4     0
+ 14   4    5     5
+ 15   5    4     0
+qsort CPU 0.000010
+
+
+ln:300>>
+Sorted edges:
+ln:218>>
+  i tail head  cap
+  0   0    1     2
+  1   0    2     1
+  2   0    4     2
+  3   1    0     0
+  4   1    2     4
+  5   1    4     0
+  6   2    0     0
+  7   2    1     0
+  8   2    3     5
+  9   3    2     0
+ 10   3    4     5
+ 11   4    0     0
+ 12   4    1     2
+ 13   4    3     0
+ 14   4    5     5
+ 15   5    4     0
+
+
+ln:321>>
+Coalesced edges:
+ln:218>>
+  i tail head  cap
+  0   0    1     2
+  1   0    2     1
+  2   0    4     2
+  3   1    0     0
+  4   1    2     4
+  5   1    4     0
+  6   2    0     0
+  7   2    1     0
+  8   2    3     5
+  9   3    2     0
+ 10   3    4     5
+ 11   4    0     0
+ 12   4    1     2
+ 13   4    3     0
+ 14   4    5     5
+ 15   5    4     0
+set inverses CPU 0.000008
+
+
+ln:229>>Initialized residual network:
+Vertex firstEdge
+   0      0
+   1      3
+   2      6
+   3      9
+   4     11
+   5     15
+=================
+   6     16
+
+
+  i tail head  cap  inv
+  0   0    1     2    3
+  1   0    2     1    6
+  2   0    4     2   11
+  3   1    0     0    0
+  4   1    2     4    7
+  5   1    4     0   12
+  6   2    0     0    1
+  7   2    1     0    4
+  8   2    3     5    9
+  9   3    2     0    8
+ 10   3    4     5   13
+ 11   4    0     0    2
+ 12   4    1     2    5
+ 13   4    3     0   10
+ 14   4    5     5   15
+ 15   5    4     0   14
+5<-4<-0 adds 2 incremental flow
+5<-4<-3<-2<-0 adds 1 incremental flow
+5<-4<-3<-2<-1<-0 adds 2 incremental flow
+3 augmenting paths
+S side of min-cut:
+0
+T side of min-cut:
+1
+2
+3
+4
+5
+total flow is 5
+Ford-Fulkerson time 0.000017
+flows along edges:
+0->1 has 2
+0->2 has 1
+0->4 has 2
+1->2 has 2
+2->3 has 3
+3->4 has 3
+4->5 has 5
