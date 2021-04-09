@@ -5,6 +5,11 @@
  *  @note This code is based of implementations provided by Dr. Bob Weems of
  *  UTA-CSE department.
  *  @link http://ranger.uta.edu/~weems/NOTES5311/cse5311.html
+
+https://www.youtube.com/results?search_query=maximum+flow+and+cut+trees
+ https://en.wikipedia.org/wiki/Gomory%E2%80%93Hu_tree
+https://www.youtube.com/watch?v=oHy3ddI9X3o
+
  **/
 
 // Derived from
@@ -87,6 +92,7 @@ int dequeue ()
 int bfs (int start, int target)
 {
   int u,v,i;
+  printf("ln:%3d>>in BFS\n",__LINE__);
 
   for (u=0; u<n; u++)
     color[u] = WHITE;
@@ -124,6 +130,9 @@ int bfs (int start, int target)
 // Ford-Fulkerson Algorithm
 int max_flow (int source, int sink)
 {
+
+  printf("ln:%3d>>in max-flow\n",__LINE__);
+
   int i,j,u;
   int max_flow;
   int APcount=0;
