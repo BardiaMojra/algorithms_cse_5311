@@ -29,13 +29,12 @@ https://www.youtube.com/watch?v=oHy3ddI9X3o
 
 // Basic Definitions
 
-#define WHITE 0
+#define WHITE 0 // on the T side of the cut
 #define GRAY 1
-#define BLACK 2
+#define BLACK 2 // on the S side of the cut
 #define oo 1000000000
 
 // Declarations
-
 int n;  // number of nodes
 int residualEdges;  // number of edges in residual network
 struct edge {
@@ -92,18 +91,18 @@ int dequeue ()
 int bfs (int start, int target)
 {
   int u,v,i;
-  printf("ln:%3d>>in BFS\n",__LINE__);
+  printf("\n     --->> ln:%3d>>in BFS\n",__LINE__);
 
   for (u=0; u<n; u++)
-    color[u] = WHITE;
+    color[u] = WHITE; /// on the T side of the cut
   head = tail = 0;  // Since q is not circular, it is reinitialized for each BFS
   enqueue(start);
   pred[start] = -1;
   while (head!=tail)
   {
     u=dequeue();
-    if (u==target)
-      return 1;
+    //if (u==target)
+    //  return 1;
 
     // Search all adjacent white nodes v. If the residual capacity
     // from u to v in the residual network is positive,
@@ -124,16 +123,27 @@ int bfs (int start, int target)
   // source side (S) of the minimum cut, while white vertices are in the
   // sink side (T).
 
-  return 0;
+  return (pred[v]==target); // or u==target
+}
+
+void dfs(int s)
+{
+  color[s] = BLACK; // mark source node as visited
+  for (i=firstEdge[s]; i<firstEdge[s+1]; i++)
+    {
+      v=edgeTab[i].head;
+      if (color[v]==WHITE && edgeTab[i].capacity-edgeTab[i].flow>0)
+      {
+        dfs(v);
+      }
+    }
 }
 
 // Ford-Fulkerson Algorithm
-int max_flow (int source, int sink)
+int min_cut(int source, int sink)
 {
-
-  printf("ln:%3d>>in max-flow\n",__LINE__);
-
-  int i,j,u;
+  printf("\n\nln:%3d>>in max-flow\n",__LINE__);
+  int i,u;
   int max_flow;
   int APcount=0;
 
@@ -141,14 +151,14 @@ int max_flow (int source, int sink)
   pred=(int*) malloc(n*sizeof(int));
   predEdge=(int*) malloc(n*sizeof(int));
   q=(int*) malloc(n*sizeof(int));
+
   if (!color || !pred || !predEdge || !q)
   {
     printf("malloc failed %d\n",__LINE__);
     exit(0);
-    }
+  }
 
   // Initialize empty flow.
-  max_flow = 0;
   for (i=0; i<residualEdges; i++)
     edgeTab[i].flow=0;
 
@@ -162,7 +172,7 @@ int max_flow (int source, int sink)
     for (u=sink; pred[u]!=(-1); u=pred[u])
     {
       i=predEdge[u];
-      increment = min(increment,edgeTab[i].capacity-edgeTab[i].flow);
+      increment = min(increment,edgeTab[i].capacity - edgeTab[i].flow);
     }
     // Now increment the flow.
     for (u=sink; pred[u]!=(-1); u=pred[u])
@@ -178,13 +188,23 @@ int max_flow (int source, int sink)
         printf("%d<-",u);
       printf("%d adds %d incremental flow\n",source,increment);
     }
-    max_flow += increment;
+    //max_flow += increment;
   }
+
+
+  printf("\n --->ln:%d:  %d augmenting paths\n", __LINE__, APcount);
   printf("%d augmenting paths\n",APcount);
+
+
+
+
+  // only
+  memset(color, WHITE, sizeof(color));
+  dfs(source);
   // No more augmenting paths, so cut is based on reachability from last BFS.
   if (n<=20)
   {
-    printf("S side of min-cut:\n");
+    printf("\n\nS side of min-cut:\n");
     for (u=0; u<n; u++)
       if (color[u]==BLACK)
         printf("%d\n",u);
@@ -200,7 +220,7 @@ int max_flow (int source, int sink)
   free(predEdge);
   free(q);
 
-  return max_flow;
+  return;
 }
 
 // Reading the input file and organize adjacency lists for residual network.
@@ -380,7 +400,7 @@ int main ()
 
   read_input_file();
   startCPU=CPUtime();
-  printf("total flow is %d\n",max_flow(0,n-1));  // 0=source, n-1=sink
+  printf("total flow is %d\n",min_cut(0,n-1));  // 0=source, n-1=sink
   stopCPU=CPUtime();
   printf("Ford-Fulkerson time %f\n",stopCPU-startCPU);
   if (n<=20)
