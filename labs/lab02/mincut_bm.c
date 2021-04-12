@@ -45,9 +45,18 @@ typedef struct edge edgeType;
 edgeType *edgeTab;
 int *firstEdge;  // Table indicating first in range of edges with a common tail
 
+
+
+
 int *color;      // Needed for breadth-first search
 int *pred;       // Array to store augmenting path
 int *predEdge;   // edgeTab subscript of edge used to reach vertex i in BFS
+
+// for min-cut
+int *fl; // hold max flow for an arbitrary cut
+int *p; //
+
+
 
 float CPUtime()
 {
@@ -102,8 +111,8 @@ int bfs (int start, int target)
   while (head!=tail)
   {
     u=dequeue();
-    //if (u==target)
-    //  return 1;
+    if (u==target)
+      return 1;
 
     // Search all adjacent white nodes v. If the residual capacity
     // from u to v in the residual network is positive,
@@ -124,9 +133,10 @@ int bfs (int start, int target)
   // source side (S) of the minimum cut, while white vertices are in the
   // sink side (T).
 
-  return (u==target); // or u==target
+  return 0; //(u==target); // or u==target
 }
 
+/*
 void dfs(int s)
 {
   int i,v;
@@ -140,13 +150,14 @@ void dfs(int s)
       }
     }
 }
+*/
 
 // Ford-Fulkerson Algorithm
 int maxFlow(int source, int sink)
 {
   printf("\n\nln:%3d>>in max-flow\n",__LINE__);
   int i,u;
-  int mxflow;
+  int max_flow;
   int APcount=0;
 
   color=(int*) malloc(n*sizeof(int));
@@ -161,92 +172,122 @@ int maxFlow(int source, int sink)
   }
 
   // Initialize empty flow.
+  max_flow = 0;
   for (i=0; i<residualEdges; i++)
     edgeTab[i].flow=0;
 
   // While there exists an augmenting path,
-  // maxFlow the flow along this path.
+  // inc the flow along this path.
   while (bfs(source,sink))
   {
     // Determine the amount by which we can increment the flow.
-    maxFlow = oo;
+    int inc = oo;
     APcount++;
     for (u=sink; pred[u]!=(-1); u=pred[u])
     {
       i=predEdge[u];
-      maxFlow = min(maxFlow,edgeTab[i].capacity - edgeTab[i].flow);
+      inc = min(inc,edgeTab[i].capacity - edgeTab[i].flow);
     }
     // Now increment the flow.
     for (u=sink; pred[u]!=(-1); u=pred[u])
     {
       i = edgeTab[predEdge[u]].inverse;
-      edgeTab[predEdge[u]].flow += maxFlow;
-      edgeTab[i].flow -= maxFlow;  // Reverse in residual
+      edgeTab[predEdge[u]].flow += inc;
+      edgeTab[i].flow -= inc;  // Reverse in residual
     }
     if (n<=20)
     {
       // Path trace
-      for (u=sink; pred[u]!=(-1); u=pred[u])
-        printf("%d<-",u);
-      printf("%d adds %d incremental flow\n",source,maxFlow);
+    //  for (u=sink; pred[u]!=(-1); u=pred[u])
+    //    printf("%d<-",u);
+     // printf("%d adds %d incremental flow\n",source,inc);
     }
-
-    //max_flow += maxFlow;
+    max_flow += inc;
   }
 
   printf("\n --->ln:%d:  %d augmenting paths\n", __LINE__, APcount);
   printf("%d augmenting paths\n",APcount);
 
- /**
-  * @brief Now the network is at maximum flow, we just need to print
-  * vertices that are reach directly from source to sink.
-  */
-  memset(color, WHITE, sizeof(color));
-  dfs(source);
-  // No more augmenting paths, so cut is based on reachability from last BFS.
   if (n<=20)
   {
-    printf("\n\n Gomory-Hu min-cut tree:\n");
-    for (int s=0; s<n; s++)
-    {
-      for (i=firstEdge[n]; i<firstEdge[n+1]; i++)
-      {
-        printf(">ln:%d:  s:%d  t:%d  c:%d  f:%d \n", __LINE__,s,i, \
-        edgeTab[i].capacity, edgeTab[i].flow);
-        if (color[s]==BLACK && color[i]==WHITE && edgeTab[i].capacity-edgeTab[i].flow>0)
-        {
-          printf("%d %d %d\n",s, i, edgeTab[i].capacity-edgeTab[i].flow);
-          //minCut = edgeTab[u].flow;
-        }
-      }
-    }
+    printf("S side of min-cut:\n");
+    for (u=0; u<n; u++)
+      if (color[u]==BLACK)
+        printf("%d\n",u);
 
-    printf("\n\n Removed vertices:\n");
-    for (int s=0; s<n; s++)
-    {
-      for (i=firstEdge[s]; i<firstEdge[s+1]; i++)
-      {
-
-        if (color[s]==BLACK && color[i]==WHITE && edgeTab[i].capacity-edgeTab[i].flow<=0)
-        {
-          printf("%d %d %d\n",s, i, edgeTab[i].capacity-edgeTab[i].flow);
-          //minCut = edgeTab[u].flow;
-        }
-      }
-    }
-
-      for (u=0; u<n; u++)
-        if (color[u]==WHITE)
-          printf("%d\n",u);
+    printf("T side of min-cut:\n");
+    for (u=0; u<n; u++)
+      if (color[u]==WHITE)
+        printf("%d\n",u);
   }
 
-  free(color);
   free(pred);
   free(predEdge);
   free(q);
 
-  return maxFlow;
+  return max_flow;
 }
+
+int minCut(int source, int target)
+{
+  int s,i,t,a;
+  int minCut_maxFlow = oo; // Very large value
+  fl= (int*) malloc(n*sizeof(int));
+  p = (int*) malloc(n*sizeof(int));
+  memset(fl, 0, n);
+  memset(p, 0, n);
+
+  for (s=1; s<n; s++)
+  {
+    t = p[s];
+    fl[s] = maxFlow(s,t);
+
+    printf("ln:%3d>> max (%d,%d) flow value is %d\n", __LINE__, s,i,fl[s]);
+    for (int b=0; b<n; b++)
+      printf(" color: %d \n", color[b] );
+    for (i=0; i<n; i++)
+    {
+
+
+      if(i!=s && color[i]==BLACK && p[i]==t)
+      {
+        p[i] = s;
+        printf("ln:%3d>> %d is in X\n", __LINE__, i);
+      }
+    }
+
+
+    if (color[p[t]] == BLACK)
+    {
+      p[s] = p[t];
+      p[t] = s;
+      fl[s] = fl[t];
+      fl[t] = maxFlow(s,t);
+    }
+
+
+
+    printf("ln:%3d>> current tree: \n", __LINE__);
+    for (a=1; a<=s; a++)
+    {
+      printf("%d %d %d \n", a, p[a], fl[a]);
+    }
+  }
+  printf("ln:%3d>> Final tree: \n", __LINE__);
+  for (a=1; a<n; a++)
+  {
+    printf("%d %d %d \n", a, p[a], fl[a]);
+    if(fl[a] < minCut_maxFlow)
+    {
+      minCut_maxFlow = fl[a];
+    }
+  }
+
+  free(color);
+
+  return minCut_maxFlow;
+}
+
 
 // Reading the input file and organize adjacency lists for residual network.
 
@@ -268,7 +309,6 @@ int tailThenHead(const void* xin, const void* yin)
 void dumpEdges(int count)
 {
   int i;
-
   printf("ln:%3d>>\n", __LINE__);
   printf("  i tail head  cap\n");
   for (i=0; i<count; i++)

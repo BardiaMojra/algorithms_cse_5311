@@ -94,8 +94,6 @@ void minCut(int graph[V][V], int s, int t)
         }
     }
 
-//>>>......
-
     // Flow is maximum now, find vertices reachable from s
     bool visited[V];
     memset(visited, false, sizeof(visited));
