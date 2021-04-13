@@ -2,7 +2,7 @@
  *  @author Bardia Mojra
  *  @date 05/04/2021
  *  @brief Implementing minimum cut for undirected graph for cse5311 lab 02
- *  @note This code is based of implementations provided by Dr. Bob Weems of
+ *  @note This code is based on implementations provided by Dr. Bob Weems of
  *  UTA-CSE department.
  *  @link http://ranger.uta.edu/~weems/NOTES5311/cse5311.html
 
@@ -29,7 +29,7 @@ https://www.youtube.com/watch?v=oHy3ddI9X3o
 #include <sys/resource.h>
 
 // Basic Definitions
-
+//#define NBUG
 #define WHITE 0 // on the T side of the cut
 #define GRAY 1
 #define BLACK 2 // on the S side of the cut
@@ -44,10 +44,6 @@ struct edge {
 typedef struct edge edgeType;
 edgeType *edgeTab;
 int *firstEdge;  // Table indicating first in range of edges with a common tail
-
-
-
-
 int *color;      // Needed for breadth-first search
 int *pred;       // Array to store augmenting path
 int *predEdge;   // edgeTab subscript of edge used to reach vertex i in BFS
@@ -55,8 +51,6 @@ int *predEdge;   // edgeTab subscript of edge used to reach vertex i in BFS
 // for min-cut
 int *fl; // hold max flow for an arbitrary cut
 int *p; //
-
-
 
 float CPUtime()
 {
@@ -155,7 +149,9 @@ void dfs(int s)
 // Ford-Fulkerson Algorithm
 int maxFlow(int source, int sink)
 {
+#ifdef NBUG
   printf("\n\nln:%3d>>in max-flow\n",__LINE__);
+#endif
   int i,u;
   int max_flow;
   int APcount=0;
@@ -205,9 +201,9 @@ int maxFlow(int source, int sink)
     max_flow += inc;
   }
 
+#ifdef NBUG
   printf("\n --->ln:%d:  %d augmenting paths\n", __LINE__, APcount);
   printf("%d augmenting paths\n",APcount);
-
   if (n<=20)
   {
     printf("S side of min-cut:\n");
@@ -220,7 +216,7 @@ int maxFlow(int source, int sink)
       if (color[u]==WHITE)
         printf("%d\n",u);
   }
-
+#endif
   free(pred);
   free(predEdge);
   free(q);
@@ -241,18 +237,19 @@ int minCut(int source, int target)
   {
     t = p[s];
     fl[s] = maxFlow(s,t);
-
+#ifdef NBUG
     printf("ln:%3d>> max (%d,%d) flow value is %d\n", __LINE__, s,i,fl[s]);
     for (int b=0; b<n; b++)
       printf(" color: %d \n", color[b] );
+#endif
     for (i=0; i<n; i++)
     {
-
-
       if(i!=s && color[i]==BLACK && p[i]==t)
       {
         p[i] = s;
+#ifdef NBUG
         printf("ln:%3d>> %d is in X\n", __LINE__, i);
+#endif
       }
     }
 
@@ -264,14 +261,13 @@ int minCut(int source, int target)
       fl[s] = fl[t];
       fl[t] = maxFlow(s,t);
     }
-
-
-
+#ifdef NBUG
     printf("ln:%3d>> current tree: \n", __LINE__);
     for (a=1; a<=s; a++)
     {
       printf("%d %d %d \n", a, p[a], fl[a]);
     }
+#endif
   }
   printf("ln:%3d>> Final tree: \n", __LINE__);
   for (a=1; a<n; a++)
@@ -284,19 +280,15 @@ int minCut(int source, int target)
   }
 
   free(color);
-
   return minCut_maxFlow;
 }
 
-
 // Reading the input file and organize adjacency lists for residual network.
-
 int tailThenHead(const void* xin, const void* yin)
 // Used in calls to qsort() and bsearch() for read_input_file()
 {
   int result;
   edgeType *x,*y;
-
   x=(edgeType*) xin;
   y=(edgeType*) yin;
   result=x->tail - y->tail;
@@ -308,18 +300,20 @@ int tailThenHead(const void* xin, const void* yin)
 
 void dumpEdges(int count)
 {
+#ifdef NBUG
   int i;
   printf("ln:%3d>>\n", __LINE__);
   printf("  i tail head  cap\n");
   for (i=0; i<count; i++)
     printf("%3d %3d  %3d %5d\n",i,edgeTab[i].tail,edgeTab[i].head,
       edgeTab[i].capacity);
+#endif
 }
 
 void dumpFinal()
 {
+#ifdef NBUG
   int i;
-
   printf("\n\nln:%3d>>Initialized residual network:\n", __LINE__);
   printf("Vertex firstEdge\n");
   for (i=0; i<n; i++)
@@ -331,6 +325,7 @@ void dumpFinal()
   for (i=0; i<residualEdges; i++)
     printf("%3d %3d  %3d %5d  %3d\n",i,edgeTab[i].tail,edgeTab[i].head,
       edgeTab[i].capacity,edgeTab[i].inverse);
+#endif
 }
 
 void read_input_file()
@@ -341,6 +336,7 @@ void read_input_file()
                       // generated from input file.
   edgeType work;
   edgeType *ptr;
+
   float startCPU,stopCPU;
 
   // read number of nodes and edges
@@ -359,7 +355,7 @@ void read_input_file()
     scanf("%d %d %d",&tail,&head,&capacity);
     // Test for illegal edge, including incoming to source and outgoing from
     // sink.
-    if (tail<0 || tail>=n-1 || head<1 || head>=n || capacity<=0)
+    if (tail<0 || tail>=n || head<0 || head>=n || capacity<=0)
     {
       printf("Invalid input %d %d %d at %d\n",tail,head,capacity,__LINE__);
       exit(0);
@@ -377,9 +373,10 @@ void read_input_file()
   }
   if (n<=20)
   {
-
+#ifdef NBUG
     printf("\n\nln:%3d>>Input & inverses:\n", __LINE__);
     dumpEdges(workingEdges);
+#endif
   }
 
   // Sort edges to make edges with common tail contiguous in edgeTab,
@@ -388,6 +385,7 @@ void read_input_file()
   startCPU=CPUtime();
   qsort(edgeTab,workingEdges,sizeof(edgeType),tailThenHead);
   stopCPU=CPUtime();
+#ifdef NBUG
   printf("qsort CPU %f\n",stopCPU-startCPU);
   if (n<=20)
   {
@@ -395,6 +393,7 @@ void read_input_file()
     printf("Sorted edges:\n");
     dumpEdges(workingEdges);
   }
+#endif
 
   // Coalesce parallel edges into a single edge by adding their capacities.
   residualEdges=0;
@@ -410,13 +409,14 @@ void read_input_file()
       edgeTab[residualEdges].capacity=edgeTab[i].capacity;
     }
   residualEdges++;
+#ifdef NBUG
   if (n<=20)
   {
     printf("\n\nln:%3d>>\n", __LINE__);
     printf("Coalesced edges:\n");
     dumpEdges(residualEdges);
   }
-
+#endif
   // Set field in each edgeTab struct to point to inverse
   startCPU=CPUtime();
   for (i=0; i<residualEdges; i++)
@@ -433,8 +433,9 @@ void read_input_file()
     edgeTab[i].inverse=ptr-edgeTab;  // ptr arithmetic to get subscript
   }
   stopCPU=CPUtime();
+#ifdef NBUG
   printf("set inverses CPU %f\n",stopCPU-startCPU);
-
+#endif
   // For each vertex i, determine first edge in edgeTab with
   // a tail >= i.
   firstEdge=(int*) malloc((n+1)*sizeof(int));
@@ -465,10 +466,11 @@ int main ()
 
   read_input_file();
   startCPU=CPUtime();
-  printf("total flow is %d\n", minCut(0,n-1));  // 0=source, n-1=sink
+  printf("\ntotal flow is %d\n", minCut(0,n-1));  // 0=source, n-1=sink
   stopCPU=CPUtime();
   printf("Ford-Fulkerson time %f\n",stopCPU-startCPU);
-  if (n<=20)
+#ifdef NBUG
+ if (n<=20)
   {
     printf("flows along edges:\n");
     for (i=0; i<residualEdges; i++)
@@ -476,6 +478,7 @@ int main ()
         printf("%d->%d has %d\n",edgeTab[i].tail,
           edgeTab[i].head,edgeTab[i].flow);
   }
+#endif
   free(edgeTab);
   free(firstEdge);
 }
