@@ -74,7 +74,7 @@ int k;
 
 int get_t(int index)
 {
-  if (index<dollarPos)
+  if (index<=dollarPos)
     return 0;
   if (index<hashPos)
     return 1;
