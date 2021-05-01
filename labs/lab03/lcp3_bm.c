@@ -7,21 +7,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char s[1000000],s1[500000],s2[500000], s3[500000];
+#define NBUG
+#define MAX_STRING_LENGTH 500000
+#define MSL MAX_STRING_LENGTH
+#define MIL 2*MAX_INPUT_LENGTH
+
+char s[MIL],s1[MSL],s2[MSL], s3[MSL];
 int dollarPos,hashPos,
   n,           // length of s[] including \0
-  sa[1000000],   // suffix array for s[]
-  rank[1000000], // rank[i] gives the rank (subscript) of s[i] in sa[]
-  lcp[1000000];  // lcp[i] indicates the number of identical prefix symbols
+  sa[MIL],   // suffix array for s[]
+  rank[MIL], // rank[i] gives the rank (subscript) of s[i] in sa[]
+  lcp[MIL];  // lcp[i] indicates the number of identical prefix symbols
                  // for s[sa[i-1]] and s[sa[i]]
+
 
 int suffixCompare(const void *xVoidPt,const void *yVoidPt)
 {
   // Used in qsort call to generate suffix array.
-  int *xPt=(int*) xVoidPt,*yPt=(int*) yVoidPt;
-
-  return strcmp(&s[*xPt],&s[*yPt]);
-}
+  int *xPt=(int*) xVoidPt,*yPt=(int*) yVoidPt;MSL
 
 void computeRank()
 {
@@ -86,7 +89,7 @@ int get_t(int index)
 
 int main()
 {
-  int i,j,u,k,p,LCSpos=-1,LCSlength=1;
+  int i,j,u,x,y,z,LCSpos=-1,LCSlength=1;
 
 
   scanf("%s",s1);
@@ -153,6 +156,62 @@ int main()
 
   for (i=1;i<n;i++)
   {
+    int x,y,z;
+
+    x=get_t(sa[i-1]);
+    y=get_t(sa[i]);
+    z=get_t(sa[i+1]);
+
+    if( !(x==y) && !(x==z) )
+    {
+      if(y==z)
+      {
+        for(j=i+1; get_t(sa[j])!=y; j++)
+        {
+          z=get_t(sa[j]);
+          if(z==x) // no good, update index (i) and return to i-for loop
+          {
+            SCSlength = MSL;
+            SCSpos = -1;
+            i = j;
+          }
+          else if (z!=x) // we are gucci
+          {
+            if (lcp[j]<=SCSlength)
+            {
+              SCSlength = lcp[j];
+              SCSpos = j;
+            }
+          }
+          else if (z==y) //same y again
+          {
+            if (lcp[j]<=SCSlength)
+            {
+              SCSlength = lcp[j];
+              SCSpos = j;
+            }
+
+          }
+          else
+          {
+            printf(" %d >>>> Err: This line should be unreachable!", __LINE__)
+#ifdef NBUG
+            break();
+#endif
+          }
+        }
+      }
+      else
+      {
+
+      }
+      nop;
+
+    }
+
+
+
+
     if (sa[i-1]<=dollarPos && sa[i]>dollarPos
       ||  sa[i-1]>dollarPos && sa[i]<=dollarPos)
     {
