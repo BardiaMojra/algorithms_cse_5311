@@ -1,0 +1,29 @@
+display/d x
+r < data/test_f.txt 
+display/d x
+b 167 173
+b 167
+b 173
+b 217
+r < data/test_f.txt 
+display/d x
+display/d y
+display/d z
+display/d SCSlength 
+SCSPos
+display/d SCSpos 
+display/d i
+display/d j
+display/d LCSlength 
+display/d LCSpos 
+r < data/test_f.txt 
+show args
+show env
+set history filename histfile
+set history save on 
+r < data/test_f.txt 
+display/d x
+display/d SCSlength 
+display/d i
+quir
+quit

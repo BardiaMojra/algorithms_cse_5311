@@ -7,10 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NBUG
+//#define NBUG
 #define MAX_STRING_LENGTH 500000
 #define MSL MAX_STRING_LENGTH
-#define MIL 2*MAX_INPUT_LENGTH
+#define MIL 2*MSL // max input string
 
 char s[MIL],s1[MSL],s2[MSL], s3[MSL];
 int dollarPos,hashPos,
@@ -24,7 +24,9 @@ int dollarPos,hashPos,
 int suffixCompare(const void *xVoidPt,const void *yVoidPt)
 {
   // Used in qsort call to generate suffix array.
-  int *xPt=(int*) xVoidPt,*yPt=(int*) yVoidPt;MSL
+  int *xPt=(int*) xVoidPt,*yPt=(int*) yVoidPt;
+  return strcmp(&s[*xPt],&s[*yPt]);
+}
 
 void computeRank()
 {
@@ -79,7 +81,7 @@ int get_t(int index)
 {
   if (index<=dollarPos)
     return 0;
-  if (index<hashPos)
+  if (index<=hashPos)
     return 1;
   if (index<n)
     return 2;
@@ -89,8 +91,8 @@ int get_t(int index)
 
 int main()
 {
-  int i,j,u,x,y,z,LCSpos=-1,LCSlength=1;
-
+  int i,j,u,LCSpos=-1,LCSlength=0;
+  int SCSlength=MSL,SCSpos=-1;
 
   scanf("%s",s1);
   scanf("%s",s2);
@@ -153,75 +155,81 @@ int main()
         i,sa[i],&s[sa[i]],lcp[i],get_t(sa[i]),
         s[i],rank[i],lcp[rank[i]]);
   }
-
   for (i=1;i<n;i++)
   {
     int x,y,z;
-
     x=get_t(sa[i-1]);
     y=get_t(sa[i]);
     z=get_t(sa[i+1]);
 
-    if( !(x==y) && !(x==z) )
+    //SCSlength = MSL;
+    //SCSpos = -1;
+
+    if( !(x==y) && !(x==z) ) //--------------------------------------------------------
     {
+      SCSlength = lcp[i];
+      SCSpos = i;
       if(y==z)
       {
-        for(j=i+1; get_t(sa[j])!=y; j++)
+        for(j=i; get_t(sa[j+1])!=y; j++) // only loop over similar y+ //--------------------------------------------------------
         {
-          z=get_t(sa[j]);
-          if(z==x) // no good, update index (i) and return to i-for loop
-          {
-            SCSlength = MSL;
-            SCSpos = -1;
-            i = j;
-          }
-          else if (z!=x) // we are gucci
-          {
-            if (lcp[j]<=SCSlength)
-            {
-              SCSlength = lcp[j];
-              SCSpos = j;
-            }
-          }
-          else if (z==y) //same y again
-          {
-            if (lcp[j]<=SCSlength)
-            {
-              SCSlength = lcp[j];
-              SCSpos = j;
-            }
-
-          }
-          else
-          {
-            printf(" %d >>>> Err: This line should be unreachable!", __LINE__)
 #ifdef NBUG
-            break();
+          printf("in inner loop\n");
 #endif
+          if (lcp[j]<=SCSlength)
+          {
+            SCSlength = lcp[j];
+            SCSpos = j;
           }
         }
-      }
-      else
+
+        z=get_t(sa[j+1]);
+
+        if(z==x) // no good, update index (i) and return to i-for loop
+        {
+          i = j; // update i pos
+        }
+        else if ((z!=x) && (z!=y) ) // we are gucci --- xy+z
+        {
+          if (lcp[j+1]<=SCSlength)
+          {
+            SCSlength = lcp[j+1];
+            SCSpos = j+1;
+            i = j; // update i pos
+          }
+        }
+        else
+        {
+#ifdef NBUG
+          printf(" >>>> ......................................  at line %d >>>> Err: This line should be unreachable!\n", __LINE__);
+#endif
+        }
+      } // end of for loop - j
+      else if ((x==y) || (x==z))
       {
-
+#ifdef NBUG
+        printf(" .. skip -- (x==y) || (x==z)\n");
+#endif
       }
-      nop;
+      else // should be valid ---- xyz
+      {
+#ifdef NBUG
+        printf("  >>>> ...................................... simple xyz at i:%2d \n", i);
+#endif
+        if (lcp[i+1]<=SCSlength)
+        {
+          SCSlength = lcp[i+1];
+          SCSpos = i+1;
+        }
+      }
+    } // end of if statement for checking x vs y and z
 
-    }
-
-
-
-
-    if (sa[i-1]<=dollarPos && sa[i]>dollarPos
-      ||  sa[i-1]>dollarPos && sa[i]<=dollarPos)
+    if (SCSlength>LCSlength)
     {
-      if (lcp[i]>=LCSlength)
-      {
-        LCSpos=i;
-        LCSlength=lcp[i];
-        printf("Length of longest common substring is %d at positions %d %d\n",LCSlength,i-1,i);
-        printf("%.*s\n",LCSlength,s+sa[LCSpos]);
-      }
+      LCSpos=SCSpos;
+      LCSlength=lcp[SCSpos];
+      printf("Length %2d, x at %2d, y ends at %2d, z at %2d \n",LCSlength,i-1,LCSpos,LCSpos+1);
+      printf("%.*s\n",LCSlength,s+sa[LCSpos]);
     }
-  }
+  } // end of outer for loop
 }
