@@ -1,0 +1,39 @@
+n is 24
+i     sa    suffix                              lcp   t s  rank   lcp[rank]
+0     23                                        -1    2 b  18     4    
+1     14    #bbbbbacd                           0     1 b  15     3    
+2     6     $bbbbbac#bbbbbacd                   0     0 b  12     2    
+3     5     a$bbbbbac#bbbbbacd                  0     0 b  9      1    
+4     12    ac#bbbbbacd                         1     1 b  6      0    
+5     20    acd                                 2     2 a  3      0    
+6     4     ba$bbbbbac#bbbbbacd                 0     0 $  2      0    
+7     11    bac#bbbbbacd                        2     1 b  19     6    
+8     19    bacd                                3     2 b  16     5    
+9     3     bba$bbbbbac#bbbbbacd                1     0 b  13     4    
+10    10    bbac#bbbbbacd                       3     1 b  10     3    
+11    18    bbacd                               4     2 b  7      2    
+12    2     bbba$bbbbbac#bbbbbacd               2     0 a  4      1    
+13    9     bbbac#bbbbbacd                      4     1 c  21     0    
+14    17    bbbacd                              5     2 #  1      0    
+15    1     bbbba$bbbbbac#bbbbbacd              3     0 b  20     7    
+16    8     bbbbac#bbbbbacd                     5     1 b  17     6    
+17    16    bbbbacd                             6     2 b  14     5    
+18    0     bbbbba$bbbbbac#bbbbbacd             4     0 b  11     4    
+19    7     bbbbbac#bbbbbacd                    6     1 b  8      3    
+20    15    bbbbbacd                            7     2 a  5      2    
+21    13    c#bbbbbacd                          0     1 c  22     1    
+22    21    cd                                  1     2 d  23     0    
+23    22    d                                   0     2    0      -1   
+Length 1, x at 3, y ends at 4, z at 5
+a
+Length 2, x at 6, y ends at 7, z at 8
+ba
+Length 3, x at 9, y ends at 10, z at 11
+bba
+Length 4, x at 12, y ends at 13, z at 14
+bbba
+Length 5, x at 15, y ends at 16, z at 17
+bbbba
+Length 6, x at 18, y ends at 19, z at 20
+bbbbba
+
