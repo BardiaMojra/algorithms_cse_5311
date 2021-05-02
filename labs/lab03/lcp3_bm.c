@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#define NBUG
+#define NBUG
 #define MAX_STRING_LENGTH 500000
 #define MSL MAX_STRING_LENGTH
 #define MIL 2*MSL // max input string
@@ -187,7 +187,7 @@ int main()
 
         if(z==x) // no good, update index (i) and return to i-for loop
         {
-          i = j; // update i pos
+          //i = j; // update i pos
         }
         else if ((z!=x) && (z!=y) ) // we are gucci --- xy+z
         {
@@ -195,26 +195,26 @@ int main()
           {
             SCSlength = lcp[j+1];
             SCSpos = j+1;
-            i = j; // update i pos
+            //i = j; // update i pos
           }
         }
         else
         {
 #ifdef NBUG
-          printf(" >>>> ......................................  at line %d >>>> Err: This line should be unreachable!\n", __LINE__);
+          printf("  line %d >>>> x:%3d , y:%3d , z:%3d  --- unexpected! \n", __LINE__, i-1, j, j+1);
 #endif
         }
       } // end of for loop - j
       else if ((x==y) || (x==z))
       {
 #ifdef NBUG
-        printf(" .. skip -- (x==y) || (x==z)\n");
+        printf("  line %d >>>> x:%3d , y:%3d , z:%3d  --- unexpected! \n", __LINE__, i-1, j, j+1);
 #endif
       }
       else // should be valid ---- xyz
       {
 #ifdef NBUG
-        printf("  >>>> ...................................... simple xyz at i:%2d \n", i);
+          printf("  line %d >>>> x:%3d , y:%3d , z:%3d  --- simple xyz! \n", __LINE__, i-1, j, j+1);
 #endif
         if (lcp[i+1]<=SCSlength)
         {
@@ -228,7 +228,7 @@ int main()
     {
       LCSpos=SCSpos;
       LCSlength=lcp[SCSpos];
-      printf("Length %2d, x at %2d, y ends at %2d, z at %2d \n",LCSlength,i-1,LCSpos,LCSpos+1);
+      printf("Length %2d, x at %2d, y ends at %2d, z at %2d \n",LCSlength,i-1,j,j+1);
       printf("%.*s\n",LCSlength,s+sa[LCSpos]);
     }
   } // end of outer for loop

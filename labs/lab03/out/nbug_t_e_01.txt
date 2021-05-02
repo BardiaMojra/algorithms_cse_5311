@@ -1,0 +1,380 @@
+n is 314
+i     sa    suffix                              lcp   t s  rank   lcp[rank]
+0     313                                       -1    2 a  43     13   
+1     199   #abcdefghijktaaaafabcdefghijkuababa 0     1 b  101    12   
+2     73    $abcdefghijjlaaaadabcdefghijjmababa 0     0 a  72     11   
+3     52    aaaababacabacabacabac$abcdefghijjla 0     0 c  130    10   
+4     20    aaaacabcdefghiiiabababacabacabacaaa 4     0 a  40     9    
+5     86    aaaadabcdefghijjmabababcdefghijjnab 4     1 b  98     8    
+6     131   aaaaeabcdefghijjpabcdefghijjqababab 4     1 a  69     7    
+7     212   aaaafabcdefghijkuabababcdefghijkvab 4     2 c  127    6    
+8     268   aaaagabababcdefghijkxabcdefghijkyab 4     2 a  37     5    
+9     53    aaababacabacabacabac$abcdefghijjlaa 3     0 b  95     4    
+10    21    aaacabcdefghiiiabababacabacabacaaaa 3     0 a  66     3    
+11    87    aaadabcdefghijjmabababcdefghijjnabc 3     1 c  124    2    
+12    132   aaaeabcdefghijjpabcdefghijjqabababc 3     1 a  21     1    
+13    213   aaafabcdefghijkuabababcdefghijkvabc 3     2 b  79     0    
+14    269   aaagabababcdefghijkxabcdefghijkyabc 3     2 a  27     5    
+15    54    aababacabacabacabac$abcdefghijjlaaa 2     0 b  85     4    
+16    22    aacabcdefghiiiabababacabacabacaaaab 2     0 a  36     8    
+17    88    aadabcdefghijjmabababcdefghijjnabcd 2     1 b  94     7    
+18    133   aaeabcdefghijjpabcdefghijjqabababcd 2     1 a  65     6    
+19    214   aafabcdefghijkuabababcdefghijkvabcd 2     2 c  123    5    
+20    270   aagabababcdefghijkxabcdefghijkyabcd 2     2 a  4      4    
+21    12    abababacaaaacabcdefghiiiabababacaba 1     0 a  10     3    
+22    36    abababacabacabacaaaababacabacabacab 9     0 a  16     2    
+23    160   abababcdefghijjabcdefghijjrabcdefgh 6     1 a  74     4    
+24    103   abababcdefghijjnabcdefghijjoaaaaeab 15    1 c  132    3    
+25    229   abababcdefghijkvabcdefghijkabcdefgh 14    2 a  45     2    
+26    273   abababcdefghijkxabcdefghijkyabcdefg 15    2 b  103    1    
+27    14    ababacaaaacabcdefghiiiabababacabaca 5     0 c  133    1    
+28    38    ababacabacabacaaaababacabacabacabac 7     0 d  152    1    
+29    55    ababacabacabacabac$abcdefghijjlaaaa 15    0 e  171    1    
+30    162   ababcdefghijjabcdefghijjrabcdefghij 4     1 f  190    1    
+31    105   ababcdefghijjnabcdefghijjoaaaaeabcd 13    1 g  209    1    
+32    231   ababcdefghijkvabcdefghijkabcdefghij 12    2 h  227    0    
+33    275   ababcdefghijkxabcdefghijkyabcdefghi 13    2 i  247    2    
+34    69    abac$abcdefghijjlaaaadabcdefghijjma 3     0 i  246    1    
+35    48    abacaaaababacabacabacabac$abcdefghi 4     0 i  245    0    
+36    16    abacaaaacabcdefghiiiabababacabacaba 8     0 a  22     9    
+37    8     abacabababacaaaacabcdefghiiiabababa 5     0 b  80     8    
+38    65    abacabac$abcdefghijjlaaaadabcdefghi 7     0 a  28     7    
+39    44    abacabacaaaababacabacabacabac$abcde 8     0 b  86     6    
+40    4     abacabacabababacaaaacabcdefghiiiaba 9     0 a  42     12   
+41    61    abacabacabac$abcdefghijjlaaaadabcde 11    0 b  100    11   
+42    40    abacabacabacaaaababacabacabacabac$a 12    0 a  71     10   
+43    0     abacabacabacabababacaaaacabcdefghii 13    0 c  129    9    
+44    57    abacabacabacabac$abcdefghijjlaaaada 15    0 a  39     8    
+45    25    abcdefghiiiabababacabacabacaaaababa 2     0 b  97     7    
+46    164   abcdefghijjabcdefghijjrabcdefghijjs 9     1 a  68     6    
+47    74    abcdefghijjlaaaadabcdefghijjmababab 11    1 c  126    5    
+48    91    abcdefghijjmabababcdefghijjnabcdefg 11    1 a  35     4    
+49    107   abcdefghijjnabcdefghijjoaaaaeabcdef 11    1 b  93     3    
+50    119   abcdefghijjoaaaaeabcdefghijjpabcdef 11    1 a  64     2    
+51    136   abcdefghijjpabcdefghijjqabababcdefg 11    1 c  122    1    
+52    148   abcdefghijjqabababcdefghijjabcdefgh 11    1 a  3      0    
+53    175   abcdefghijjrabcdefghijjs#abcdefghij 11    1 a  9      3    
+54    187   abcdefghijjs#abcdefghijktaaaafabcde 11    1 a  15     2    
+55    245   abcdefghijkabcdefghijkwaaaagabababc 10    2 a  29     15   
+56    200   abcdefghijktaaaafabcdefghijkuababab 11    2 b  87     14   
+57    217   abcdefghijkuabababcdefghijkvabcdefg 11    2 a  44     15   
+58    233   abcdefghijkvabcdefghijkabcdefghijkw 11    2 b  102    14   
+59    256   abcdefghijkwaaaagabababcdefghijkxab 11    2 a  73     13   
+60    277   abcdefghijkxabcdefghijkyabcdefghijk 11    2 c  131    12   
+61    289   abcdefghijkyabcdefghijkz            11    2 a  41     11   
+62    301   abcdefghijkz                        11    2 b  99     10   
+63    71    ac$abcdefghijjlaaaadabcdefghijjmaba 1     0 a  70     9    
+64    50    acaaaababacabacabacabac$abcdefghijj 2     0 c  128    8    
+65    18    acaaaacabcdefghiiiabababacabacabaca 6     0 a  38     7    
+66    10    acabababacaaaacabcdefghiiiabababaca 3     0 b  96     6    
+67    67    acabac$abcdefghijjlaaaadabcdefghijj 5     0 a  67     5    
+68    46    acabacaaaababacabacabacabac$abcdefg 6     0 c  125    4    
+69    6     acabacabababacaaaacabcdefghiiiababa 7     0 a  34     3    
+70    63    acabacabac$abcdefghijjlaaaadabcdefg 9     0 b  92     2    
+71    42    acabacabacaaaababacabacabacabac$abc 10    0 a  63     1    
+72    2     acabacabacabababacaaaacabcdefghiiia 11    0 c  121    0    
+73    59    acabacabacabac$abcdefghijjlaaaadabc 13    0 $  2      0    
+74    23    acabcdefghiiiabababacabacabacaaaaba 4     0 a  47     11   
+75    89    adabcdefghijjmabababcdefghijjnabcde 1     1 b  105    10   
+76    134   aeabcdefghijjpabcdefghijjqabababcde 1     1 c  135    9    
+77    215   afabcdefghijkuabababcdefghijkvabcde 1     2 d  154    8    
+78    271   agabababcdefghijkxabcdefghijkyabcde 1     2 e  173    7    
+79    13    bababacaaaacabcdefghiiiabababacabac 0     0 f  192    6    
+80    37    bababacabacabacaaaababacabacabacaba 8     0 g  211    5    
+81    161   bababcdefghijjabcdefghijjrabcdefghi 5     1 h  229    4    
+82    104   bababcdefghijjnabcdefghijjoaaaaeabc 14    1 i  249    3    
+83    230   bababcdefghijkvabcdefghijkabcdefghi 13    2 j  267    2    
+84    274   bababcdefghijkxabcdefghijkyabcdefgh 14    2 j  283    1    
+85    15    babacaaaacabcdefghiiiabababacabacab 4     0 l  299    0    
+86    39    babacabacabacaaaababacabacabacabac$ 6     0 a  5      4    
+87    56    babacabacabacabac$abcdefghijjlaaaad 14    0 a  11     3    
+88    163   babcdefghijjabcdefghijjrabcdefghijj 3     1 a  17     2    
+89    106   babcdefghijjnabcdefghijjoaaaaeabcde 12    1 a  75     1    
+90    232   babcdefghijkvabcdefghijkabcdefghijk 11    2 d  151    0    
+91    276   babcdefghijkxabcdefghijkyabcdefghij 12    2 a  48     11   
+92    70    bac$abcdefghijjlaaaadabcdefghijjmab 2     0 b  106    10   
+93    49    bacaaaababacabacabacabac$abcdefghij 3     0 c  136    9    
+94    17    bacaaaacabcdefghiiiabababacabacabac 7     0 d  155    8    
+95    9     bacabababacaaaacabcdefghiiiabababac 4     0 e  174    7    
+96    66    bacabac$abcdefghijjlaaaadabcdefghij 6     0 f  193    6    
+97    45    bacabacaaaababacabacabacabac$abcdef 7     0 g  212    5    
+98    5     bacabacabababacaaaacabcdefghiiiabab 8     0 h  230    4    
+99    62    bacabacabac$abcdefghijjlaaaadabcdef 10    0 i  250    3    
+100   41    bacabacabacaaaababacabacabacabac$ab 11    0 j  268    2    
+101   1     bacabacabacabababacaaaacabcdefghiii 12    0 j  284    1    
+102   58    bacabacabacabac$abcdefghijjlaaaadab 14    0 m  300    0    
+103   26    bcdefghiiiabababacabacabacaaaababac 1     0 a  24     15   
+104   165   bcdefghijjabcdefghijjrabcdefghijjs# 8     1 b  82     14   
+105   75    bcdefghijjlaaaadabcdefghijjmabababc 10    1 a  31     13   
+106   92    bcdefghijjmabababcdefghijjnabcdefgh 10    1 b  89     12   
+107   108   bcdefghijjnabcdefghijjoaaaaeabcdefg 10    1 a  49     11   
+108   120   bcdefghijjoaaaaeabcdefghijjpabcdefg 10    1 b  107    10   
+109   137   bcdefghijjpabcdefghijjqabababcdefgh 10    1 c  137    9    
+110   149   bcdefghijjqabababcdefghijjabcdefghi 10    1 d  156    8    
+111   176   bcdefghijjrabcdefghijjs#abcdefghijk 10    1 e  175    7    
+112   188   bcdefghijjs#abcdefghijktaaaafabcdef 10    1 f  194    6    
+113   246   bcdefghijkabcdefghijkwaaaagabababcd 9     2 g  213    5    
+114   201   bcdefghijktaaaafabcdefghijkuabababc 10    2 h  231    4    
+115   218   bcdefghijkuabababcdefghijkvabcdefgh 10    2 i  251    3    
+116   234   bcdefghijkvabcdefghijkabcdefghijkwa 10    2 j  269    2    
+117   257   bcdefghijkwaaaagabababcdefghijkxabc 10    2 j  285    1    
+118   278   bcdefghijkxabcdefghijkyabcdefghijkz 10    2 n  301    0    
+119   290   bcdefghijkyabcdefghijkz             10    2 a  50     11   
+120   302   bcdefghijkz                         10    2 b  108    10   
+121   72    c$abcdefghijjlaaaadabcdefghijjmabab 0     0 c  138    9    
+122   51    caaaababacabacabacabac$abcdefghijjl 1     0 d  157    8    
+123   19    caaaacabcdefghiiiabababacabacabacaa 5     0 e  176    7    
+124   11    cabababacaaaacabcdefghiiiabababacab 2     0 f  195    6    
+125   68    cabac$abcdefghijjlaaaadabcdefghijjm 4     0 g  214    5    
+126   47    cabacaaaababacabacabacabac$abcdefgh 5     0 h  232    4    
+127   7     cabacabababacaaaacabcdefghiiiababab 6     0 i  252    3    
+128   64    cabacabac$abcdefghijjlaaaadabcdefgh 8     0 j  270    2    
+129   43    cabacabacaaaababacabacabacabac$abcd 9     0 j  286    1    
+130   3     cabacabacabababacaaaacabcdefghiiiab 10    0 o  302    0    
+131   60    cabacabacabac$abcdefghijjlaaaadabcd 12    0 a  6      4    
+132   24    cabcdefghiiiabababacabacabacaaaabab 3     0 a  12     3    
+133   27    cdefghiiiabababacabacabacaaaababaca 1     0 a  18     2    
+134   166   cdefghijjabcdefghijjrabcdefghijjs#a 7     1 a  76     1    
+135   76    cdefghijjlaaaadabcdefghijjmabababcd 9     1 e  170    0    
+136   93    cdefghijjmabababcdefghijjnabcdefghi 9     1 a  51     11   
+137   109   cdefghijjnabcdefghijjoaaaaeabcdefgh 9     1 b  109    10   
+138   121   cdefghijjoaaaaeabcdefghijjpabcdefgh 9     1 c  139    9    
+139   138   cdefghijjpabcdefghijjqabababcdefghi 9     1 d  158    8    
+140   150   cdefghijjqabababcdefghijjabcdefghij 9     1 e  177    7    
+141   177   cdefghijjrabcdefghijjs#abcdefghijkt 9     1 f  196    6    
+142   189   cdefghijjs#abcdefghijktaaaafabcdefg 9     1 g  215    5    
+143   247   cdefghijkabcdefghijkwaaaagabababcde 8     2 h  233    4    
+144   202   cdefghijktaaaafabcdefghijkuabababcd 9     2 i  253    3    
+145   219   cdefghijkuabababcdefghijkvabcdefghi 9     2 j  271    2    
+146   235   cdefghijkvabcdefghijkabcdefghijkwaa 9     2 j  287    1    
+147   258   cdefghijkwaaaagabababcdefghijkxabcd 9     2 p  303    0    
+148   279   cdefghijkxabcdefghijkyabcdefghijkz  9     2 a  52     11   
+149   291   cdefghijkyabcdefghijkz              9     2 b  110    10   
+150   303   cdefghijkz                          9     2 c  140    9    
+151   90    dabcdefghijjmabababcdefghijjnabcdef 0     1 d  159    8    
+152   28    defghiiiabababacabacabacaaaababacab 1     0 e  178    7    
+153   167   defghijjabcdefghijjrabcdefghijjs#ab 6     1 f  197    6    
+154   77    defghijjlaaaadabcdefghijjmabababcde 8     1 g  216    5    
+155   94    defghijjmabababcdefghijjnabcdefghij 8     1 h  234    4    
+156   110   defghijjnabcdefghijjoaaaaeabcdefghi 8     1 i  254    3    
+157   122   defghijjoaaaaeabcdefghijjpabcdefghi 8     1 j  272    2    
+158   139   defghijjpabcdefghijjqabababcdefghij 8     1 j  288    1    
+159   151   defghijjqabababcdefghijjabcdefghijj 8     1 q  304    0    
+160   178   defghijjrabcdefghijjs#abcdefghijkta 8     1 a  23     6    
+161   190   defghijjs#abcdefghijktaaaafabcdefgh 8     1 b  81     5    
+162   248   defghijkabcdefghijkwaaaagabababcdef 7     2 a  30     4    
+163   203   defghijktaaaafabcdefghijkuabababcde 8     2 b  88     3    
+164   220   defghijkuabababcdefghijkvabcdefghij 8     2 a  46     9    
+165   236   defghijkvabcdefghijkabcdefghijkwaaa 8     2 b  104    8    
+166   259   defghijkwaaaagabababcdefghijkxabcde 8     2 c  134    7    
+167   280   defghijkxabcdefghijkyabcdefghijkz   8     2 d  153    6    
+168   292   defghijkyabcdefghijkz               8     2 e  172    5    
+169   304   defghijkz                           8     2 f  191    4    
+170   135   eabcdefghijjpabcdefghijjqabababcdef 0     1 g  210    3    
+171   29    efghiiiabababacabacabacaaaababacaba 1     0 h  228    2    
+172   168   efghijjabcdefghijjrabcdefghijjs#abc 5     1 i  248    1    
+173   78    efghijjlaaaadabcdefghijjmabababcdef 7     1 j  266    1    
+174   95    efghijjmabababcdefghijjnabcdefghijj 7     1 j  265    0    
+175   111   efghijjnabcdefghijjoaaaaeabcdefghij 7     1 a  53     11   
+176   123   efghijjoaaaaeabcdefghijjpabcdefghij 7     1 b  111    10   
+177   140   efghijjpabcdefghijjqabababcdefghijj 7     1 c  141    9    
+178   152   efghijjqabababcdefghijjabcdefghijjr 7     1 d  160    8    
+179   179   efghijjrabcdefghijjs#abcdefghijktaa 7     1 e  179    7    
+180   191   efghijjs#abcdefghijktaaaafabcdefghi 7     1 f  198    6    
+181   249   efghijkabcdefghijkwaaaagabababcdefg 6     2 g  217    5    
+182   204   efghijktaaaafabcdefghijkuabababcdef 7     2 h  235    4    
+183   221   efghijkuabababcdefghijkvabcdefghijk 7     2 i  255    3    
+184   237   efghijkvabcdefghijkabcdefghijkwaaaa 7     2 j  273    2    
+185   260   efghijkwaaaagabababcdefghijkxabcdef 7     2 j  289    1    
+186   281   efghijkxabcdefghijkyabcdefghijkz    7     2 r  305    0    
+187   293   efghijkyabcdefghijkz                7     2 a  54     11   
+188   305   efghijkz                            7     2 b  112    10   
+189   216   fabcdefghijkuabababcdefghijkvabcdef 0     2 c  142    9    
+190   30    fghiiiabababacabacabacaaaababacabac 1     0 d  161    8    
+191   169   fghijjabcdefghijjrabcdefghijjs#abcd 4     1 e  180    7    
+192   79    fghijjlaaaadabcdefghijjmabababcdefg 6     1 f  199    6    
+193   96    fghijjmabababcdefghijjnabcdefghijjo 6     1 g  218    5    
+194   112   fghijjnabcdefghijjoaaaaeabcdefghijj 6     1 h  236    4    
+195   124   fghijjoaaaaeabcdefghijjpabcdefghijj 6     1 i  256    3    
+196   141   fghijjpabcdefghijjqabababcdefghijja 6     1 j  274    2    
+197   153   fghijjqabababcdefghijjabcdefghijjra 6     1 j  290    1    
+198   180   fghijjrabcdefghijjs#abcdefghijktaaa 6     1 s  306    0    
+199   192   fghijjs#abcdefghijktaaaafabcdefghij 6     1 #  1      0    
+200   250   fghijkabcdefghijkwaaaagabababcdefgh 5     2 a  56     11   
+201   205   fghijktaaaafabcdefghijkuabababcdefg 6     2 b  114    10   
+202   222   fghijkuabababcdefghijkvabcdefghijka 6     2 c  144    9    
+203   238   fghijkvabcdefghijkabcdefghijkwaaaag 6     2 d  163    8    
+204   261   fghijkwaaaagabababcdefghijkxabcdefg 6     2 e  182    7    
+205   282   fghijkxabcdefghijkyabcdefghijkz     6     2 f  201    6    
+206   294   fghijkyabcdefghijkz                 6     2 g  220    5    
+207   306   fghijkz                             6     2 h  238    4    
+208   272   gabababcdefghijkxabcdefghijkyabcdef 0     2 i  258    3    
+209   31    ghiiiabababacabacabacaaaababacabaca 1     0 j  276    2    
+210   170   ghijjabcdefghijjrabcdefghijjs#abcde 3     1 k  292    1    
+211   80    ghijjlaaaadabcdefghijjmabababcdefgh 5     1 t  307    0    
+212   97    ghijjmabababcdefghijjnabcdefghijjoa 5     1 a  7      4    
+213   113   ghijjnabcdefghijjoaaaaeabcdefghijjp 5     1 a  13     3    
+214   125   ghijjoaaaaeabcdefghijjpabcdefghijjq 5     1 a  19     2    
+215   142   ghijjpabcdefghijjqabababcdefghijjab 5     1 a  77     1    
+216   154   ghijjqabababcdefghijjabcdefghijjrab 5     1 f  189    0    
+217   181   ghijjrabcdefghijjs#abcdefghijktaaaa 5     1 a  57     11   
+218   193   ghijjs#abcdefghijktaaaafabcdefghijk 5     1 b  115    10   
+219   251   ghijkabcdefghijkwaaaagabababcdefghi 4     2 c  145    9    
+220   206   ghijktaaaafabcdefghijkuabababcdefgh 5     2 d  164    8    
+221   223   ghijkuabababcdefghijkvabcdefghijkab 5     2 e  183    7    
+222   239   ghijkvabcdefghijkabcdefghijkwaaaaga 5     2 f  202    6    
+223   262   ghijkwaaaagabababcdefghijkxabcdefgh 5     2 g  221    5    
+224   283   ghijkxabcdefghijkyabcdefghijkz      5     2 h  239    4    
+225   295   ghijkyabcdefghijkz                  5     2 i  259    3    
+226   307   ghijkz                              5     2 j  277    2    
+227   32    hiiiabababacabacabacaaaababacabacab 0     0 k  293    1    
+228   171   hijjabcdefghijjrabcdefghijjs#abcdef 2     1 u  308    0    
+229   81    hijjlaaaadabcdefghijjmabababcdefghi 4     1 a  25     14   
+230   98    hijjmabababcdefghijjnabcdefghijjoaa 4     1 b  83     13   
+231   114   hijjnabcdefghijjoaaaaeabcdefghijjpa 4     1 a  32     12   
+232   126   hijjoaaaaeabcdefghijjpabcdefghijjqa 4     1 b  90     11   
+233   143   hijjpabcdefghijjqabababcdefghijjabc 4     1 a  58     11   
+234   155   hijjqabababcdefghijjabcdefghijjrabc 4     1 b  116    10   
+235   182   hijjrabcdefghijjs#abcdefghijktaaaaf 4     1 c  146    9    
+236   194   hijjs#abcdefghijktaaaafabcdefghijku 4     1 d  165    8    
+237   252   hijkabcdefghijkwaaaagabababcdefghij 3     2 e  184    7    
+238   207   hijktaaaafabcdefghijkuabababcdefghi 4     2 f  203    6    
+239   224   hijkuabababcdefghijkvabcdefghijkabc 4     2 g  222    5    
+240   240   hijkvabcdefghijkabcdefghijkwaaaagab 4     2 h  240    4    
+241   263   hijkwaaaagabababcdefghijkxabcdefghi 4     2 i  260    3    
+242   284   hijkxabcdefghijkyabcdefghijkz       4     2 j  278    2    
+243   296   hijkyabcdefghijkz                   4     2 k  294    1    
+244   308   hijkz                               4     2 v  309    0    
+245   35    iabababacabacabacaaaababacabacabaca 0     0 a  55     10   
+246   34    iiabababacabacabacaaaababacabacabac 1     0 b  113    9    
+247   33    iiiabababacabacabacaaaababacabacaba 2     0 c  143    8    
+248   172   ijjabcdefghijjrabcdefghijjs#abcdefg 1     1 d  162    7    
+249   82    ijjlaaaadabcdefghijjmabababcdefghij 3     1 e  181    6    
+250   99    ijjmabababcdefghijjnabcdefghijjoaaa 3     1 f  200    5    
+251   115   ijjnabcdefghijjoaaaaeabcdefghijjpab 3     1 g  219    4    
+252   127   ijjoaaaaeabcdefghijjpabcdefghijjqab 3     1 h  237    3    
+253   144   ijjpabcdefghijjqabababcdefghijjabcd 3     1 i  257    2    
+254   156   ijjqabababcdefghijjabcdefghijjrabcd 3     1 j  275    1    
+255   183   ijjrabcdefghijjs#abcdefghijktaaaafa 3     1 k  291    0    
+256   195   ijjs#abcdefghijktaaaafabcdefghijkua 3     1 a  59     11   
+257   253   ijkabcdefghijkwaaaagabababcdefghijk 2     2 b  117    10   
+258   208   ijktaaaafabcdefghijkuabababcdefghij 3     2 c  147    9    
+259   225   ijkuabababcdefghijkvabcdefghijkabcd 3     2 d  166    8    
+260   241   ijkvabcdefghijkabcdefghijkwaaaagaba 3     2 e  185    7    
+261   264   ijkwaaaagabababcdefghijkxabcdefghij 3     2 f  204    6    
+262   285   ijkxabcdefghijkyabcdefghijkz        3     2 g  223    5    
+263   297   ijkyabcdefghijkz                    3     2 h  241    4    
+264   309   ijkz                                3     2 i  261    3    
+265   174   jabcdefghijjrabcdefghijjs#abcdefghi 0     1 j  279    2    
+266   173   jjabcdefghijjrabcdefghijjs#abcdefgh 1     1 k  295    1    
+267   83    jjlaaaadabcdefghijjmabababcdefghijj 2     1 w  310    0    
+268   100   jjmabababcdefghijjnabcdefghijjoaaaa 2     1 a  8      4    
+269   116   jjnabcdefghijjoaaaaeabcdefghijjpabc 2     1 a  14     3    
+270   128   jjoaaaaeabcdefghijjpabcdefghijjqaba 2     1 a  20     2    
+271   145   jjpabcdefghijjqabababcdefghijjabcde 2     1 a  78     1    
+272   157   jjqabababcdefghijjabcdefghijjrabcde 2     1 g  208    0    
+273   184   jjrabcdefghijjs#abcdefghijktaaaafab 2     1 a  26     15   
+274   196   jjs#abcdefghijktaaaafabcdefghijkuab 2     1 b  84     14   
+275   254   jkabcdefghijkwaaaagabababcdefghijkx 1     2 a  33     13   
+276   209   jktaaaafabcdefghijkuabababcdefghijk 2     2 b  91     12   
+277   226   jkuabababcdefghijkvabcdefghijkabcde 2     2 a  60     11   
+278   242   jkvabcdefghijkabcdefghijkwaaaagabab 2     2 b  118    10   
+279   265   jkwaaaagabababcdefghijkxabcdefghijk 2     2 c  148    9    
+280   286   jkxabcdefghijkyabcdefghijkz         2     2 d  167    8    
+281   298   jkyabcdefghijkz                     2     2 e  186    7    
+282   310   jkz                                 2     2 f  205    6    
+283   84    jlaaaadabcdefghijjmabababcdefghijjn 1     1 g  224    5    
+284   101   jmabababcdefghijjnabcdefghijjoaaaae 1     1 h  242    4    
+285   117   jnabcdefghijjoaaaaeabcdefghijjpabcd 1     1 i  262    3    
+286   129   joaaaaeabcdefghijjpabcdefghijjqabab 1     1 j  280    2    
+287   146   jpabcdefghijjqabababcdefghijjabcdef 1     1 k  296    1    
+288   158   jqabababcdefghijjabcdefghijjrabcdef 1     1 x  311    0    
+289   185   jrabcdefghijjs#abcdefghijktaaaafabc 1     1 a  61     11   
+290   197   js#abcdefghijktaaaafabcdefghijkuaba 1     1 b  119    10   
+291   255   kabcdefghijkwaaaagabababcdefghijkxa 0     2 c  149    9    
+292   210   ktaaaafabcdefghijkuabababcdefghijkv 1     2 d  168    8    
+293   227   kuabababcdefghijkvabcdefghijkabcdef 1     2 e  187    7    
+294   243   kvabcdefghijkabcdefghijkwaaaagababa 1     2 f  206    6    
+295   266   kwaaaagabababcdefghijkxabcdefghijky 1     2 g  225    5    
+296   287   kxabcdefghijkyabcdefghijkz          1     2 h  243    4    
+297   299   kyabcdefghijkz                      1     2 i  263    3    
+298   311   kz                                  1     2 j  281    2    
+299   85    laaaadabcdefghijjmabababcdefghijjna 0     1 k  297    1    
+300   102   mabababcdefghijjnabcdefghijjoaaaaea 0     1 y  312    0    
+301   118   nabcdefghijjoaaaaeabcdefghijjpabcde 0     1 a  62     11   
+302   130   oaaaaeabcdefghijjpabcdefghijjqababa 0     1 b  120    10   
+303   147   pabcdefghijjqabababcdefghijjabcdefg 0     1 c  150    9    
+304   159   qabababcdefghijjabcdefghijjrabcdefg 0     1 d  169    8    
+305   186   rabcdefghijjs#abcdefghijktaaaafabcd 0     1 e  188    7    
+306   198   s#abcdefghijktaaaafabcdefghijkuabab 0     1 f  207    6    
+307   211   taaaafabcdefghijkuabababcdefghijkva 0     2 g  226    5    
+308   228   uabababcdefghijkvabcdefghijkabcdefg 0     2 h  244    4    
+309   244   vabcdefghijkabcdefghijkwaaaagababab 0     2 i  264    3    
+310   267   waaaagabababcdefghijkxabcdefghijkya 0     2 j  282    2    
+311   288   xabcdefghijkyabcdefghijkz           0     2 k  298    1    
+312   300   yabcdefghijkz                       0     2 z  313    0    
+313   312   z                                   0     2    0      -1   
+  line 217 >>>> x:  0 , y:126 , z:127  --- simple xyz! 
+  line 204 >>>> x:  1 , y:  2 , z:  3  --- unexpected! 
+  line 204 >>>> x:  4 , y:  5 , z:  6  --- unexpected! 
+Length  4, x at  4, y ends at  5, z at  6 
+aaaa
+  line 204 >>>> x:  6 , y:  7 , z:  8  --- unexpected! 
+  line 204 >>>> x:  8 , y:  9 , z: 10  --- unexpected! 
+  line 204 >>>> x: 10 , y: 11 , z: 12  --- unexpected! 
+  line 204 >>>> x: 12 , y: 13 , z: 14  --- unexpected! 
+  line 204 >>>> x: 14 , y: 15 , z: 16  --- unexpected! 
+  line 204 >>>> x: 16 , y: 17 , z: 18  --- unexpected! 
+  line 204 >>>> x: 18 , y: 19 , z: 20  --- unexpected! 
+  line 204 >>>> x: 20 , y: 21 , z: 22  --- unexpected! 
+  line 204 >>>> x: 22 , y: 23 , z: 24  --- unexpected! 
+Length  6, x at 22, y ends at 23, z at 24 
+ababab
+  line 204 >>>> x: 24 , y: 25 , z: 26  --- unexpected! 
+Length 14, x at 24, y ends at 25, z at 26 
+abababcdefghij
+  line 204 >>>> x: 26 , y: 27 , z: 28  --- unexpected! 
+  line 204 >>>> x: 29 , y: 30 , z: 31  --- unexpected! 
+  line 204 >>>> x: 31 , y: 32 , z: 33  --- unexpected! 
+  line 204 >>>> x: 33 , y: 34 , z: 35  --- unexpected! 
+  line 204 >>>> x: 45 , y: 46 , z: 47  --- unexpected! 
+  line 204 >>>> x: 54 , y: 55 , z: 56  --- unexpected! 
+  line 204 >>>> x: 62 , y: 63 , z: 64  --- unexpected! 
+  line 204 >>>> x: 74 , y: 75 , z: 76  --- unexpected! 
+  line 204 >>>> x: 76 , y: 77 , z: 78  --- unexpected! 
+  line 204 >>>> x: 78 , y: 79 , z: 80  --- unexpected! 
+  line 204 >>>> x: 80 , y: 81 , z: 82  --- unexpected! 
+  line 204 >>>> x: 82 , y: 83 , z: 84  --- unexpected! 
+  line 204 >>>> x: 84 , y: 85 , z: 86  --- unexpected! 
+  line 204 >>>> x: 87 , y: 88 , z: 89  --- unexpected! 
+  line 204 >>>> x: 89 , y: 90 , z: 91  --- unexpected! 
+  line 204 >>>> x: 91 , y: 92 , z: 93  --- unexpected! 
+  line 204 >>>> x:103 , y:104 , z:105  --- unexpected! 
+  line 204 >>>> x:112 , y:113 , z:114  --- unexpected! 
+  line 204 >>>> x:120 , y:121 , z:122  --- unexpected! 
+  line 204 >>>> x:133 , y:134 , z:135  --- unexpected! 
+  line 204 >>>> x:142 , y:143 , z:144  --- unexpected! 
+  line 217 >>>> x:150 , y:143 , z:144  --- simple xyz! 
+  line 204 >>>> x:152 , y:153 , z:154  --- unexpected! 
+  line 204 >>>> x:161 , y:162 , z:163  --- unexpected! 
+  line 217 >>>> x:169 , y:162 , z:163  --- simple xyz! 
+  line 204 >>>> x:171 , y:172 , z:173  --- unexpected! 
+  line 204 >>>> x:180 , y:181 , z:182  --- unexpected! 
+  line 217 >>>> x:189 , y:181 , z:182  --- simple xyz! 
+  line 204 >>>> x:190 , y:191 , z:192  --- unexpected! 
+  line 204 >>>> x:199 , y:200 , z:201  --- unexpected! 
+  line 217 >>>> x:208 , y:200 , z:201  --- simple xyz! 
+  line 204 >>>> x:209 , y:210 , z:211  --- unexpected! 
+  line 204 >>>> x:218 , y:219 , z:220  --- unexpected! 
+  line 217 >>>> x:226 , y:219 , z:220  --- simple xyz! 
+  line 204 >>>> x:227 , y:228 , z:229  --- unexpected! 
+  line 204 >>>> x:236 , y:237 , z:238  --- unexpected! 
+  line 204 >>>> x:244 , y:245 , z:246  --- unexpected! 
+  line 204 >>>> x:247 , y:248 , z:249  --- unexpected! 
+  line 204 >>>> x:256 , y:257 , z:258  --- unexpected! 
+  line 204 >>>> x:264 , y:265 , z:266  --- unexpected! 
+  line 204 >>>> x:274 , y:275 , z:276  --- unexpected! 
+  line 204 >>>> x:282 , y:283 , z:284  --- unexpected! 
+  line 204 >>>> x:290 , y:291 , z:292  --- unexpected! 
+  line 204 >>>> x:298 , y:299 , z:300  --- unexpected! 
+  line 204 >>>> x:306 , y:307 , z:308  --- unexpected! 
