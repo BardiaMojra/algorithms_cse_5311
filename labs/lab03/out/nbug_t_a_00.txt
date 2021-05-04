@@ -1503,23 +1503,17 @@ i     sa    suffix                              lcp   t s  rank   lcp[rank]
 1500  259   zobcdefghijklmnopqrstuvwxyzabcdefgh 1     0 q  941    1    
 1501  1327  zqbvdefghijklmnopqrstuvlxyzakcdefgh 1     2 r  989    0    
 1502  1142  zxyzabcdeaghijklmnopqrstuvwxyzabkde 1     2    0      -1   
-Length  1, x at  3, y ends at  4, z at  5 
-a
 Length  5, x at  6, y ends at  7, z at  8 
 abcde
-Length  6, x at  7, y ends at  8, z at  9 
+Length  6, x at  7, y ends at  9, z at 10 
 abcdef
 Length 11, x at 10, y ends at 11, z at 12 
 abcdefghijk
-Length 15, x at 13, y ends at 14, z at 15 
-abcdefghijklmno
 Length 21, x at 16, y ends at 17, z at 18 
 abcdefghijklmnopqrstu
 Length 22, x at 17, y ends at 18, z at 19 
 abcdefghijklmnopqrstuv
 Length 37, x at 18, y ends at 19, z at 20 
 abcdefghijklmnopqrstuvwxyzabcdefghijk
-Length 48, x at 20, y ends at 21, z at 22 
-abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuv
-Length 50, x at 1408, y ends at 1409, z at 1410 
-yzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuv
+Length 42, x at 1245, y ends at 1246, z at 1247 
+vwxyzabcdefghijklmnopqrstuvwxyzabcdefghijk

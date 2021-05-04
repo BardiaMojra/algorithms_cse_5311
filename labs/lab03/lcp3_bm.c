@@ -12,6 +12,8 @@
 #define MSL MAX_STRING_LENGTH
 #define MIL 2*MSL // max input string
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 char s[MIL],s1[MSL],s2[MSL], s3[MSL];
 int dollarPos,hashPos,
   n,           // length of s[] including \0
@@ -91,8 +93,8 @@ int get_t(int index)
 
 int main()
 {
-  int i,j,u,LCSpos=-1,LCSlength=0;
-  int SCSlength=MSL,SCSpos=-1;
+  int i,j,u,e,LCSpos=-1,LCSlength=0, minLCP=MSL, minLCPpos;
+  //int SCSlength=MSL,SCSpos=-1;
 
   scanf("%s",s1);
   scanf("%s",s2);
@@ -155,23 +157,121 @@ int main()
         i,sa[i],&s[sa[i]],lcp[i],get_t(sa[i]),
         s[i],rank[i],lcp[rank[i]]);
   }
-  for (i=1;i<n;i++)
+  i = 0;
+  e = i+2;
+  while (e<n)
   {
-    int x,y,z;
-    x=get_t(sa[i-1]);
-    y=get_t(sa[i]);
-    z=get_t(sa[i+1]);
+    if (get_t(sa[i])==get_t(sa[i+1]))
+    {
+      // skip
+      i = i+1;
+      e = MAX(i+2,e); // move to end if e smaller than 2+i
+    }
+    else // first two elements are different
+    {
+      if (get_t(sa[e])==get_t(sa[i]))
+      {
+        // skip
+        i = i+1;
+        e = MAX(i+2,e); // move to end if e smaller than 2+i
+      }
+      else //
+      {
+        if (get_t(sa[e])==get_t(sa[i+1]))
+        {
+          while(get_t(sa[e])==get_t(sa[i+1]))
+          {
+            e = e+1;
+          }
+        }
+        else
+        {
+          minLCP = MSL;
+          for (int k = i+1; k<=e; k++)
+          {
+            if (lcp[k]<minLCP)
+            {
+              minLCP = lcp[k];
+              minLCPpos = k;
+            }
+          }
+          if (LCSlength<minLCP)
+          {
+            LCSlength = minLCP;
+            LCSpos = minLCPpos;
+            printf("Length %2d, x at %2d, y ends at %2d, z at %2d \n",LCSlength,i,e-1,e);
+            printf("%.*s\n",LCSlength,s+sa[LCSpos]);
+          }
+          i++;
+          e = MAX(i+2,e);
+        }
+      }
+    }
+      /*
 
-    //SCSlength = MSL;
-    //SCSpos = -1;
+      else if ( !(z==y) && !(x==z) ) // simple xyz
+      {
+        // check lcp value for y
+        if (lcp[e]<=SCSlength)
+        {
+          SCSlength = lcp[e];
+          SCSpos = e;
+        }
 
+        // check lcp value for Z
+        if (lcp[e+1]<=SCSlength)
+        {
+          SCSlength = lcp[e+1];
+          SCSpos = e+1;
+        }
+        */
+
+      // look at the end of interval
+      // if y==z , increment end pointer
+
+      //else // till x==z
+    //} // end of else - after if(x==y)
+  } // end of main for loop for start pointer
+} // end of main
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
     if( !(x==y) && !(x==z) ) //--------------------------------------------------------
     {
-      SCSlength = lcp[i];
-      SCSpos = i;
+      SCSlength = lcp[i+1];
+      SCSpos = i+1;
       if(y==z)
       {
-        for(j=i; get_t(sa[j+1])!=y; j++) // only loop over similar y+ //--------------------------------------------------------
+        for(j=i; ((get_t(sa[j+1])!=y) && (get_t(sa[j+1])!=x)); j++) // only loop over similar y+ //--------------------------------------------------------
         {
 #ifdef NBUG
           printf("in inner loop\n");
@@ -201,20 +301,24 @@ int main()
         else
         {
 #ifdef NBUG
-          printf("  line %d >>>> x:%3d , y:%3d , z:%3d  --- unexpected! \n", __LINE__, i-1, j, j+1);
+          printf("  line %d >>>> x:%3d , y:%3d , z:%3d  --- skip - failed inner! \n", __LINE__, i-1, j, j+1);
+          printf("  line %d >>>> t[x]:%3d , t[y]:%3d , t[z]:%3d \n", __LINE__, get_t(sa[i-1]), get_t(sa[j]), get_t(sa[j+1]));
 #endif
         }
       } // end of for loop - j
       else if ((x==y) || (x==z))
       {
 #ifdef NBUG
-        printf("  line %d >>>> x:%3d , y:%3d , z:%3d  --- unexpected! \n", __LINE__, i-1, j, j+1);
+        printf("  line %d >>>> x:%3d , y:%3d , z:%3d  --- skip ! \n", __LINE__, i-1, j, j+1);
+        printf("  line %d >>>> t[x]:%3d , t[y]:%3d , t[z]:%3d \n", __LINE__, get_t(sa[i-1]), get_t(sa[j]), get_t(sa[j+1]));
 #endif
       }
       else // should be valid ---- xyz
       {
 #ifdef NBUG
           printf("  line %d >>>> x:%3d , y:%3d , z:%3d  --- simple xyz! \n", __LINE__, i-1, j, j+1);
+          printf("  line %d >>>> t[x]:%3d , t[y]:%3d , t[z]:%3d \n", __LINE__, get_t(sa[i-1]), get_t(sa[j]), get_t(sa[j+1]));
+
 #endif
         if (lcp[i+1]<=SCSlength)
         {
@@ -223,6 +327,10 @@ int main()
         }
       }
     } // end of if statement for checking x vs y and z
+
+#ifdef NBUG
+    //printf("  line %d >>>> t[x]:%3d , t[y]:%3d , t[z]:%3d \n", __LINE__, get_t(sa[i-1]), get_t(sa[j]), get_t(sa[j+1]));
+#endif
 
     if (SCSlength>LCSlength)
     {
@@ -233,3 +341,4 @@ int main()
     }
   } // end of outer for loop
 }
+*/
